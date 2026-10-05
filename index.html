@@ -188,6 +188,14 @@
         padding: 10px 0 20px;
       }
 
+      .result-gif {
+        display: block;
+        max-width: 100%;
+        max-height: 260px;
+        margin: 0 auto 18px;
+        border-radius: 12px;
+      }
+
       .result-message {
         font-size: 2.2em;
         font-weight: 800;
@@ -268,6 +276,10 @@
         main {
           padding: 24px 18px 28px;
         }
+
+        .result-gif {
+          max-height: 200px;
+        }
       }
     </style>
   </head>
@@ -317,271 +329,6 @@
 
     <div id="confettiContainer" class="confetti-container"></div>
 
-    <script>
-      const questions = [
-        {
-          question: "Who are you to the handsome man?",
-          type: "input",
-          accepted: ["co-worker", "coworker", "workmates", "officemates"],
-          success: "Correct! You're part of the team. 💼",
-          fail: "Not quite. Try again!"
-        },
-        {
-          question: "What is my favorite programming language?",
-          type: "multiple",
-          answers: ["Python", "JavaScript", "Go", "Rust"],
-          correctIndex: 1,
-          success: "Correct! JavaScript is my favorite. 🚀",
-          fail: "Not this one — I love JavaScript!"
-        },
-        {
-          question: "What is my go-to drink?",
-          type: "multiple",
-          answers: ["Coffee", "Tea", "Energy drink", "Water"],
-          correctIndex: 0,
-          success: "Yep! Coffee is my go-to. ☕",
-          fail: "Not quite — I’m a coffee person."
-        },
-        {
-          question: "What do I enjoy outside of work?",
-          type: "multiple",
-          answers: ["Sleeping", "Gaming", "Watching TV", "Running"],
-          correctIndex: 1,
-          success: "Exactly! I enjoy gaming and fun activities. 🎮",
-          fail: "Not this one — gaming is more my thing."
-        },
-        {
-          question: "How many years have I been coding?",
-          type: "multiple",
-          answers: ["1 year", "3 years", "5 years", "10+ years"],
-          correctIndex: 2,
-          success: "Correct! I’ve been coding for 5 years. 🔥",
-          fail: "Not this time — it’s been 5 years."
-        }
-      ];
-
-      const nameScreen = document.getElementById("nameScreen");
-      const questionScreen = document.getElementById("questionScreen");
-      const resultScreen = document.getElementById("resultScreen");
-      const finalScreen = document.getElementById("finalScreen");
-      const questionText = document.getElementById("questionText");
-      const answerArea = document.getElementById("answerArea");
-      const resultBox = document.getElementById("resultBox");
-      const progressBar = document.getElementById("progressBar");
-      const progressText = document.getElementById("progressText");
-      const nameInput = document.getElementById("nameInput");
-      const nameError = document.getElementById("nameError");
-      const scoreBox = document.getElementById("scoreBox");
-      const confettiContainer = document.getElementById("confettiContainer");
-
-      let currentQuestionIndex = 0;
-      let score = 0;
-      let answered = false;
-
-      function updateProgress() {
-        const totalQuestions = questions.length;
-        const percent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
-        progressBar.style.width = percent + "%";
-        progressText.textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
-      }
-
-      function showNameScreen() {
-        nameScreen.classList.remove("hidden");
-        questionScreen.classList.add("hidden");
-        resultScreen.classList.add("hidden");
-        finalScreen.classList.add("hidden");
-        nameError.classList.add("hidden");
-        nameInput.value = "";
-        nameInput.focus();
-      }
-
-      function createConfetti() {
-        const colors = ["#ffd700", "#ff69b4", "#00bfff", "#32cd32", "#ff8c00", "#ffffff"];
-
-        for (let i = 0; i < 60; i++) {
-          const piece = document.createElement("div");
-          piece.className = "confetti";
-          piece.style.left = Math.random() * 100 + "%";
-          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-          piece.style.animationDelay = Math.random() * 0.4 + "s";
-          confettiContainer.appendChild(piece);
-        }
-
-        setTimeout(() => {
-          confettiContainer.innerHTML = "";
-        }, 3000);
-      }
-
-      document.getElementById("submitNameButton").addEventListener("click", () => {
-        const value = nameInput.value.trim().toLowerCase();
-
-        if (value === "jamaica") {
-          nameError.classList.add("hidden");
-          createConfetti();
-          setTimeout(() => {
-            score = 0;
-            currentQuestionIndex = 0;
-            showQuestion();
-          }, 900);
-          return;
-        }
-
-        nameError.classList.remove("hidden");
-        nameInput.value = "";
-        nameInput.focus();
-      });
-
-      function showQuestion() {
-        const question = questions[currentQuestionIndex];
-        answered = false;
-
-        nameScreen.classList.add("hidden");
-        questionScreen.classList.remove("hidden");
-        resultScreen.classList.add("hidden");
-        finalScreen.classList.add("hidden");
-
-        questionText.textContent = question.question;
-        answerArea.innerHTML = "";
-
-        if (question.type === "input") {
-          const input = document.createElement("input");
-          input.type = "text";
-          input.placeholder = "Type your answer...";
-          input.style.width = "100%";
-          input.style.padding = "16px 18px";
-          input.style.borderRadius = "12px";
-          input.style.border = "2px solid #d9d9d9";
-          input.style.fontSize = "1.05em";
-          input.style.marginBottom = "16px";
-
-          const button = document.createElement("button");
-          button.className = "submit-btn";
-          button.textContent = "Submit";
-
-          button.addEventListener("click", () => {
-            if (answered) return;
-
-            const value = input.value.trim().toLowerCase();
-            const isCorrect = question.accepted.includes(value);
-
-            answered = true;
-            handleAnswer(isCorrect, question.success, question.fail);
-          });
-
-          input.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              button.click();
-            }
-          });
-
-          answerArea.appendChild(input);
-          answerArea.appendChild(button);
-          input.focus();
-
-          updateProgress();
-          return;
-        }
-
-        question.answers.forEach((answer, index) => {
-          const button = document.createElement("button");
-          button.className = "answer-btn";
-          button.textContent = answer;
-
-          button.addEventListener("click", () => {
-            if (answered) return;
-
-            answered = true;
-            const isCorrect = index === question.correctIndex;
-            handleAnswer(isCorrect, question.success, question.fail);
-          });
-
-          answerArea.appendChild(button);
-        });
-
-        updateProgress();
-      }
-
-      function handleAnswer(isCorrect, successText, failText) {
-        const correctIndex = questions[currentQuestionIndex].correctIndex;
-
-        const buttons = document.querySelectorAll(".answer-btn");
-        if (buttons.length) {
-          buttons.forEach((btn) => {
-            btn.classList.add("disabled");
-          });
-
-          if (typeof correctIndex === "number") {
-            buttons[correctIndex].classList.add("correct");
-          }
-        }
-
-        const input = answerArea.querySelector("input");
-        const submitBtn = answerArea.querySelector(".submit-btn");
-
-        if (input) input.disabled = true;
-        if (submitBtn) submitBtn.disabled = true;
-
-        if (isCorrect) {
-          score += 1;
-        }
-
-        resultScreen.classList.remove("hidden");
-        questionScreen.classList.add("hidden");
-
-        resultBox.innerHTML = `
-          <div class="result-message ${isCorrect ? "correct" : "incorrect"}">
-            ${isCorrect ? "✓ Correct!" : "✗ Incorrect"}
-          </div>
-          <div class="result-text">
-            ${isCorrect ? successText : failText}
-          </div>
-        `;
-      }
-
-      document.getElementById("continueButton").addEventListener("click", () => {
-        currentQuestionIndex += 1;
-
-        if (currentQuestionIndex < questions.length) {
-          showQuestion();
-        } else {
-          showFinalScreen();
-        }
-      });
-
-      function showFinalScreen() {
-        const total = questions.length;
-        const percentage = Math.round((score / total) * 100);
-
-        let message = "";
-        if (percentage === 100) {
-          message = "Perfect! You know everything! 🌟";
-        } else if (percentage >= 80) {
-          message = "Awesome! You really know me well! 🎉";
-        } else if (percentage >= 60) {
-          message = "Good job! You know me pretty well. 😊";
-        } else if (percentage >= 40) {
-          message = "Not bad at all! We should hang out more. 😄";
-        } else {
-          message = "We need to get to know each other better! 😜";
-        }
-
-        resultScreen.classList.add("hidden");
-        finalScreen.classList.remove("hidden");
-
-        scoreBox.innerHTML = `
-          <div>🏆</div>
-          <div class="score-num">${score}/${total}</div>
-          <div class="score-message">${percentage}%<br>${message}</div>
-        `;
-      }
-
-      document.getElementById("restartButton").addEventListener("click", () => {
-        currentQuestionIndex = 0;
-        score = 0;
-        showNameScreen();
-      });
-
-      showNameScreen();
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
