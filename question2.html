@@ -84,12 +84,12 @@
           <h1>About Me Quiz</h1>
         </header>
         <div class="content">
-          <h2>What is my favorite programming language?</h2>
+          <h2>What's Richard's full name?</h2>
           <div class="answers">
-            <button class="answer-btn" data-correct="false">Python</button>
-            <button class="answer-btn" data-correct="true">JavaScript</button>
-            <button class="answer-btn" data-correct="false">Go</button>
-            <button class="answer-btn" data-correct="false">Rust</button>
+            <button class="answer-btn" data-correct="false">Richard Bundalian</button>
+            <button class="answer-btn" data-correct="false">Richard Basco</button>
+            <button class="answer-btn" data-correct="true">Richard Budlong</button>
+            <button class="answer-btn" data-correct="false">Richard Gomez</button>
           </div>
 
           <div id="result" class="result"></div>
@@ -113,11 +113,11 @@
 
           if (isCorrect) {
             button.classList.add("correct");
-            result.textContent = "Correct! JavaScript is my favorite. 🚀";
+            result.textContent = "Correct! That's my full name! 👋";
             result.className = "result show correct";
           } else {
             button.classList.add("incorrect");
-            result.textContent = "Not this one — I love JavaScript!";
+            result.textContent = "Not quite — I'm Richard Budlong!";
             result.className = "result show incorrect";
             const correctButton = [...buttons].find((btn) => btn.dataset.correct === "true");
             if (correctButton) correctButton.classList.add("correct");
