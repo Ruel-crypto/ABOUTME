@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Drawing Challenge</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
-
+      * { box-sizing: border-box; }
       body {
         margin: 0;
         font-family: Arial, Helvetica, sans-serif;
@@ -19,188 +16,104 @@
         justify-content: center;
         padding: 20px;
       }
-
-      .container {
-        width: 100%;
-        max-width: 700px;
-      }
-
+      .container { width: 100%; max-width: 700px; }
       .card {
         background: white;
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.24);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
       }
-
       .top {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 32px 20px 20px;
+        padding: 30px 20px 20px;
         text-align: center;
       }
-
-      .eyebrow {
-        margin: 0 0 10px;
-        font-size: 12px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        opacity: 0.9;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 2.4em;
-      }
-
-      main {
-        padding: 30px 26px 36px;
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      .screen {
-        display: block;
-      }
-
-      h2 {
-        text-align: center;
-        font-size: 2em;
-        margin-bottom: 18px;
-        color: #333;
-      }
-
-      .hint {
-        text-align: center;
-        color: #666;
-        font-size: 1.05em;
-        margin-bottom: 18px;
-      }
-
-      .canvas-wrap {
-        display: flex;
-        justify-content: center;
-      }
-
+      h1 { margin: 0; font-size: 2.2em; }
+      .content { padding: 30px 20px 40px; }
+      h2 { text-align: center; margin-bottom: 18px; }
+      .hint { text-align: center; color: #666; margin-bottom: 18px; }
       canvas {
         width: 100%;
         max-width: 300px;
         height: 300px;
-        background: white;
+        display: block;
+        margin: 0 auto 18px;
         border: 3px solid #8b5cf6;
         border-radius: 12px;
-        display: block;
+        background: white;
         cursor: crosshair;
       }
-
-      .controls {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin: 18px 0 22px;
-      }
-
-      .clear-btn,
-      .submit-btn,
-      .back-btn {
+      .controls { display: flex; justify-content: center; gap: 12px; margin-bottom: 18px; }
+      .clear-btn, .submit-btn, .link-btn {
         border: none;
         border-radius: 12px;
         padding: 14px 18px;
         font-size: 1em;
         font-weight: 700;
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        text-decoration: none;
       }
-
       .clear-btn {
-        background: #df4b4b;
+        background: #db3b3b;
         color: white;
       }
-
-      .submit-btn,
-      .back-btn {
+      .submit-btn, .link-btn {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
+        display: inline-block;
         width: 100%;
+        text-align: center;
       }
-
-      .clear-btn:hover,
-      .submit-btn:hover,
-      .back-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
-      }
-
       .result-box {
         text-align: center;
         padding: 10px 0 20px;
+        display: none;
       }
-
+      .result-box.show { display: block; }
       .result-gif {
         display: block;
-        max-width: 100%;
+        width: 100%;
+        max-width: 260px;
         max-height: 260px;
         margin: 0 auto 18px;
         border-radius: 14px;
       }
-
       .result-message {
         font-size: 2.2em;
         font-weight: 800;
         margin-bottom: 14px;
       }
-
-      .result-message.correct {
-        color: #2bb673;
-      }
-
-      .result-message.incorrect {
-        color: #db3b3b;
-      }
-
-      .result-text {
-        color: #555;
-        font-size: 1.08em;
-        line-height: 1.6;
-      }
-
-      @media (max-width: 600px) {
-        h2 {
-          font-size: 1.5em;
-        }
-      }
+      .result-message.correct { color: #2bb673; }
+      .result-message.incorrect { color: #db3b3b; }
+      .result-text { color: #555; line-height:1.6; }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="card">
         <header class="top">
-          <p class="eyebrow">Mini game</p>
           <h1>Drawing Challenge</h1>
         </header>
+        <div class="content">
+          <h2>What's the first thing Richard brought to the office?</h2>
+          <p class="hint">Draw a loaf of bread — a square or rectangle bread slice.</p>
 
-        <main>
-          <section id="drawingScreen" class="screen">
-            <h2>What's the first thing Richard brought to the office?</h2>
-            <p class="hint">Draw a loaf of bread — a square or rectangle-style slice.</p>
+          <canvas id="drawingCanvas" width="300" height="300"></canvas>
 
-            <div class="canvas-wrap">
-              <canvas id="drawingCanvas" width="300" height="300"></canvas>
-            </div>
+          <div class="controls">
+            <button id="clearCanvasBtn" class="clear-btn">Clear</button>
+          </div>
 
-            <div class="controls">
-              <button id="clearCanvasBtn" class="clear-btn">Clear</button>
-            </div>
+          <button id="submitDrawingBtn" class="submit-btn">Submit Drawing</button>
 
-            <button id="submitDrawingBtn" class="submit-btn">Submit Drawing</button>
-          </section>
-
-          <section id="resultScreen" class="screen hidden">
-            <div id="resultBox" class="result-box"></div>
-            <button id="backToQuizBtn" class="back-btn">Back to quiz</button>
-          </section>
-        </main>
+          <div id="resultBox" class="result-box">
+            <img id="resultGif" class="result-gif" alt="result" />
+            <div id="resultMessage" class="result-message"></div>
+            <div id="resultText" class="result-text"></div>
+            <a class="link-btn" href="question4.html" style="margin-top: 20px; display: inline-block; width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 14px 18px; font-weight: 700; text-decoration: none;">Continue</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -209,45 +122,38 @@
       const ctx = canvas.getContext("2d");
       const clearCanvasBtn = document.getElementById("clearCanvasBtn");
       const submitDrawingBtn = document.getElementById("submitDrawingBtn");
-      const resultScreen = document.getElementById("resultScreen");
-      const drawingScreen = document.getElementById("drawingScreen");
       const resultBox = document.getElementById("resultBox");
-      const backToQuizBtn = document.getElementById("backToQuizBtn");
+      const resultMessage = document.getElementById("resultMessage");
+      const resultText = document.getElementById("resultText");
+      const resultGif = document.getElementById("resultGif");
 
       let drawing = false;
 
-      function setupCanvas() {
-        ctx.lineWidth = 4;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.strokeStyle = "#111";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "#111";
 
-        canvas.addEventListener("pointerdown", (event) => {
-          drawing = true;
-          const rect = canvas.getBoundingClientRect();
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-        });
+      canvas.addEventListener("pointerdown", (event) => {
+        drawing = true;
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      });
 
-        canvas.addEventListener("pointermove", (event) => {
-          if (!drawing) return;
-          const rect = canvas.getBoundingClientRect();
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
-          ctx.lineTo(x, y);
-          ctx.stroke();
-        });
+      canvas.addEventListener("pointermove", (event) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      });
 
-        canvas.addEventListener("pointerup", () => {
-          drawing = false;
-        });
-
-        canvas.addEventListener("pointerleave", () => {
-          drawing = false;
-        });
-      }
+      canvas.addEventListener("pointerup", () => { drawing = false; });
+      canvas.addEventListener("pointerleave", () => { drawing = false; });
 
       clearCanvasBtn.addEventListener("click", () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -256,8 +162,8 @@
       submitDrawingBtn.addEventListener("click", () => {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
-
         let filled = 0;
+
         for (let i = 0; i < data.length; i += 4) {
           if (data[i + 3] > 20) {
             filled++;
@@ -268,25 +174,20 @@
         const correctGif = "https://media.tenor.com/UTrLSr85tYEAAAAC/happy-cat-cat.gif";
         const wrongGif = "https://media.gifdb.com/a-brown-and-white-cat-is-looking-at-the-camera-with-an-angry-look-on-its-face-mqvxzmixo7xggljh.gif";
 
-        drawingScreen.classList.add("hidden");
-        resultScreen.classList.remove("hidden");
+        resultBox.classList.add("show");
+        resultGif.src = isCorrect ? correctGif : wrongGif;
+        resultGif.alt = isCorrect ? "Correct" : "Incorrect";
 
-        resultBox.innerHTML = `
-          <img src="${isCorrect ? correctGif : wrongGif}" alt="${isCorrect ? "Correct" : "Incorrect"}" class="result-gif" />
-          <div class="result-message ${isCorrect ? "correct" : "incorrect"}">
-            ${isCorrect ? "✓ Correct!" : "✗ Incorrect"}
-          </div>
-          <div class="result-text">
-            ${isCorrect ? "That’s bread! 🍞" : "Not quite. It was a loaf of sliced bread! 🍞"}
-          </div>
-        `;
+        if (isCorrect) {
+          resultMessage.textContent = "✓ Correct!";
+          resultMessage.className = "result-message correct";
+          resultText.textContent = "That’s bread! 🍞";
+        } else {
+          resultMessage.textContent = "✗ Incorrect";
+          resultMessage.className = "result-message incorrect";
+          resultText.textContent = "Not quite. It was a loaf of sliced bread! 🍞";
+        }
       });
-
-      backToQuizBtn.addEventListener("click", () => {
-        window.location.href = "index.html";
-      });
-
-      setupCanvas();
     </script>
   </body>
 </html>
