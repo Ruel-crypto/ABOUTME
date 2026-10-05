@@ -1,83 +1,71 @@
-// Quiz data
-const quizData = [
+const questions = [
   {
-    type: "name",
-    question: "What's your name?",
-    correctAnswers: ["jamaica"],
-    errorMessage: "Wrong name, try again! 👀",
-    funFact: "You're Jamaica! Welcome to the quiz! 🎉"
-  },
-  {
-    type: "question",
     question: "Who are you to the handsome man?",
-    answers: [
-      "Co-worker",
-      "Friend",
-      "Stranger",
-      "Boss"
-    ],
-    correctAnswers: ["co-worker", "coworker", "workmates", "officemates"],
-    funFact: "That's right! You work together! 💼"
+    type: "input",
+    acceptedAnswers: ["co-worker", "coworker", "workmates", "officemates"],
+    success: "Correct! You are definitely part of the team. 💼",
+    fail: "Not quite. Try again!"
   },
   {
-    type: "question",
-    question: "What's my favorite programming language?",
+    question: "What is my favorite programming language?",
+    type: "multiple",
     answers: ["Python", "JavaScript", "Go", "Rust"],
     correctIndex: 1,
-    funFact: "I love JavaScript for its flexibility! 🚀"
+    success: "Nice! JavaScript is my favorite. 🚀",
+    fail: "Close, but not quite. I love JavaScript."
   },
   {
-    type: "question",
-    question: "What's my go-to drink?",
-    answers: ["Coffee", "Tea", "Energy Drink", "Water"],
+    question: "What is my go-to drink?",
+    type: "multiple",
+    answers: ["Coffee", "Tea", "Energy drink", "Water"],
     correctIndex: 0,
-    funFact: "Coffee keeps me coding through those long sessions! ☕"
+    success: "Yep! Coffee keeps me going. ☕",
+    fail: "Not this one. I’m definitely a coffee person."
   },
   {
-    type: "question",
-    question: "What do I enjoy doing outside of work?",
-    answers: ["Gaming", "Photography", "Traveling", "All of the above"],
-    correctIndex: 3,
-    funFact: "I love all of these! They inspire my creativity! 🎨"
+    question: "What do I enjoy outside of work?",
+    type: "multiple",
+    answers: ["Only sleeping", "Gaming", "Watching TV", "Running"],
+    correctIndex: 1,
+    success: "Exactly! I enjoy gaming and fun activities. 🎮",
+    fail: "Not quite. I’m more into gaming."
   },
   {
-    type: "question",
     question: "How many years have I been coding?",
+    type: "multiple",
     answers: ["1 year", "3 years", "5 years", "10+ years"],
     correctIndex: 2,
-    funFact: "I've been on this coding journey for 5 years! 🔥"
+    success: "Right! I’ve been coding for 5 years. 🔥",
+    fail: "Not this time. I’ve been at it for 5 years."
   }
 ];
 
-let currentQuestion = 0;
-let score = 0;
-let answered = false;
-
-// DOM Elements
-const nameInput = document.getElementById("nameInput");
-const submitNameButton = document.getElementById("submitNameButton");
-const nameError = document.getElementById("nameError");
 const nameScreen = document.getElementById("nameScreen");
 const questionScreen = document.getElementById("questionScreen");
 const resultScreen = document.getElementById("resultScreen");
 const finalScreen = document.getElementById("finalScreen");
 const questionText = document.getElementById("questionText");
-const answers = document.getElementById("answers");
-const continueButton = document.getElementById("continueButton");
-const restartButton = document.getElementById("restartButton");
+const answerArea = document.getElementById("answerArea");
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
+const nameInput = document.getElementById("nameInput");
+const nameError = document.getElementById("nameError");
+const resultBox = document.getElementById("resultBox");
+const scoreBox = document.getElementById("scoreBox");
 const confettiContainer = document.getElementById("confettiContainer");
 
-// Initialize
-function init() {
-  currentQuestion = 0;
-  score = 0;
-  answered = false;
-  showNameScreen();
+let currentQuestionIndex = 0;
+let score = 0;
+let answered = false;
+let currentQuestion = null;
+
+function updateProgress() {
+  const totalQuestions = questions.length;
+  const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+  progressBar.style.width = `${progressPercent}%`;
+  progressText.textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
 }
 
-// Show Name Screen
 function showNameScreen() {
   nameScreen.classList.remove("hidden");
   questionScreen.classList.add("hidden");
@@ -86,184 +74,184 @@ function showNameScreen() {
   nameError.classList.add("hidden");
   nameInput.value = "";
   nameInput.focus();
-  updateProgress();
 }
 
-// Submit Name
-submitNameButton.addEventListener("click", () => {
-  const userInput = nameInput.value.trim().toLowerCase();
-  const currentData = quizData[0];
-  
-  if (currentData.correctAnswers.includes(userInput)) {
+function createConfetti() {
+  const colors = ["#ffd700", "#ff69b4", "#00bfff", "#32cd32", "#ff8c00", "#ffffff"];
+
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement("div");
+    piece.className = "confetti";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = `${Math.random() * 0.5}s`;
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    confettiContainer.appendChild(piece);
+  }
+
+  setTimeout(() => {
+    confettiContainer.innerHTML = "";
+  }, 3000);
+}
+
+document.getElementById("submitNameButton").addEventListener("click", () => {
+  const value = nameInput.value.trim().toLowerCase();
+
+  if (value === "jamaica") {
     nameError.classList.add("hidden");
     createConfetti();
     setTimeout(() => {
-      currentQuestion = 1;
-      score = 1;
+      currentQuestionIndex = 0;
+      score = 0;
       showQuestion();
-    }, 1500);
-  } else {
-    nameError.classList.remove("hidden");
-    nameInput.value = "";
-    nameInput.focus();
+    }, 900);
+    return;
   }
+
+  nameError.classList.remove("hidden");
+  nameInput.value = "";
+  nameInput.focus();
 });
 
-// Allow Enter key on name input
-nameInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    submitNameButton.click();
-  }
-});
-
-// Show Question
 function showQuestion() {
+  const question = questions[currentQuestionIndex];
+  currentQuestion = question;
+  answered = false;
+
   nameScreen.classList.add("hidden");
   questionScreen.classList.remove("hidden");
   resultScreen.classList.add("hidden");
   finalScreen.classList.add("hidden");
-  answered = false;
-  
-  const data = quizData[currentQuestion];
-  questionText.textContent = data.question;
-  answers.innerHTML = "";
-  
-  data.answers.forEach((answer, index) => {
-    const btn = document.createElement("button");
-    btn.className = "answer-btn";
-    btn.textContent = answer;
-    btn.addEventListener("click", () => selectAnswer(index, data));
-    answers.appendChild(btn);
+
+  questionText.textContent = question.question;
+  answerArea.innerHTML = "";
+
+  if (question.type === "input") {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "answer-input";
+    input.placeholder = "Type your answer...";
+
+    const button = document.createElement("button");
+    button.className = "submit-btn";
+    button.textContent = "Submit";
+
+    button.addEventListener("click", () => {
+      if (answered) return;
+      const value = input.value.trim().toLowerCase();
+      const isCorrect = question.acceptedAnswers.includes(value);
+      answered = true;
+      handleAnswer(isCorrect, question.success, question.fail);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        button.click();
+      }
+    });
+
+    answerArea.appendChild(input);
+    answerArea.appendChild(button);
+    input.focus();
+    return;
+  }
+
+  question.answers.forEach((answer, index) => {
+    const button = document.createElement("button");
+    button.className = "answer-btn";
+    button.textContent = answer;
+    button.addEventListener("click", () => {
+      if (answered) return;
+      answered = true;
+      const isCorrect = index === question.correctIndex;
+      handleAnswer(isCorrect, question.success, question.fail);
+    });
+    answerArea.appendChild(button);
   });
-  
+
   updateProgress();
 }
 
-// Select Answer
-function selectAnswer(index, data) {
-  if (answered) return;
-  answered = true;
-  
+function handleAnswer(isCorrect, successText, failText) {
   const buttons = document.querySelectorAll(".answer-btn");
-  buttons.forEach(btn => btn.classList.add("disabled"));
-  
-  let isCorrect = false;
-  
-  if (data.type === "question") {
-    isCorrect = index === data.correctIndex;
-  }
-  
+  const inputs = document.querySelectorAll(".answer-input");
+
+  buttons.forEach((button) => button.classList.add("disabled"));
+  inputs.forEach((input) => {
+    input.disabled = true;
+  });
+
   if (isCorrect) {
-    buttons[index].classList.add("correct");
-    score++;
+    score += 1;
+    if (buttons.length) {
+      buttons[currentQuestion.correctIndex].classList.add("correct");
+    }
   } else {
-    buttons[index].classList.add("incorrect");
-    buttons[data.correctIndex].classList.add("correct");
+    if (buttons.length) {
+      buttons[currentQuestion.correctIndex].classList.add("correct");
+      const clicked = document.querySelectorAll(".answer-btn");
+      clicked.forEach((button, i) => {
+        if (i !== currentQuestion.correctIndex && button.classList.contains("disabled") === false) {
+          button.classList.add("incorrect");
+        }
+      });
+    }
   }
-  
-  setTimeout(() => {
-    showResult(isCorrect, data.funFact);
-  }, 600);
-}
 
-// Show Result
-function showResult(isCorrect, funFact) {
-  questionScreen.classList.add("hidden");
   resultScreen.classList.remove("hidden");
-  
-  const resultBox = document.getElementById("resultBox");
+  questionScreen.classList.add("hidden");
+
   resultBox.innerHTML = `
-    <div class="result-message ${isCorrect ? "correct" : "incorrect"}">
-      ${isCorrect ? "✓ Correct!" : "✗ Incorrect"}
-    </div>
-    <div class="result-text">
-      ${funFact}
-    </div>
+    <div class="result-message ${isCorrect ? "correct" : "incorrect"}">${isCorrect ? "✓ Correct!" : "✗ Incorrect"}</div>
+    <div class="result-text">${isCorrect ? successText : failText}</div>
   `;
+
+  if (question.type === "input") {
+    const answerInput = answerArea.querySelector(".answer-input");
+    if (answerInput) {
+      answerInput.disabled = true;
+    }
+    const submitBtn = answerArea.querySelector(".submit-btn");
+    if (submitBtn) submitBtn.disabled = true;
+  }
+
+  updateProgress();
 }
 
-// Continue to Next
-continueButton.addEventListener("click", () => {
-  currentQuestion++;
-  
-  if (currentQuestion < quizData.length) {
+document.getElementById("continueButton").addEventListener("click", () => {
+  currentQuestionIndex += 1;
+
+  if (currentQuestionIndex < questions.length) {
     showQuestion();
   } else {
-    showFinalScore();
+    showFinalScreen();
   }
 });
 
-// Show Final Score
-function showFinalScore() {
-  questionScreen.classList.add("hidden");
-  resultScreen.classList.add("hidden");
-  finalScreen.classList.remove("hidden");
-  
-  const percentage = Math.round((score / quizData.length) * 100);
+function showFinalScreen() {
+  const percentage = Math.round((score / questions.length) * 100);
+
   let message = "";
-  let emoji = "";
-  
-  if (percentage === 100) {
-    message = "Perfect! You know everything! 🌟";
-    emoji = "🏆";
-  } else if (percentage >= 80) {
-    message = "Awesome! You know me so well! 🎉";
-    emoji = "⭐";
-  } else if (percentage >= 60) {
-    message = "Good job! You know quite a bit! 😊";
-    emoji = "👍";
-  } else if (percentage >= 40) {
-    message = "Not bad! Let's hang out more! 😄";
-    emoji = "🤔";
-  } else {
-    message = "Let's get to know each other better! 😜";
-    emoji = "🎯";
-  }
-  
-  const scoreBox = document.getElementById("scoreBox");
+  if (percentage === 100) message = "Perfect! You know me so well! 🌟";
+  else if (percentage >= 80) message = "Awesome! You really know me! 🎉";
+  else if (percentage >= 60) message = "Good job! You know me pretty well. 😊";
+  else if (percentage >= 40) message = "Not bad at all! We should hang out more. 😄";
+  else message = "We need to get to know each other better! 😜";
+
+  finalScreen.classList.remove("hidden");
+  resultScreen.classList.add("hidden");
+
   scoreBox.innerHTML = `
-    <div>${emoji}</div>
-    <div class="score-number">${score}/${quizData.length}</div>
-    <div>${percentage}%</div>
-    <div class="score-message">${message}</div>
+    <div>🏆</div>
+    <div class="score-number">${score}/${questions.length}</div>
+    <div class="score-message">${percentage}%<br>${message}</div>
   `;
-  
-  updateProgress();
 }
 
-// Update Progress Bar
-function updateProgress() {
-  const progress = ((currentQuestion + 1) / quizData.length) * 100;
-  progressBar.style.width = progress + "%";
-  progressText.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
-}
-
-// Create Confetti
-function createConfetti() {
-  for (let i = 0; i < 50; i++) {
-    const confetti = document.createElement("div");
-    confetti.className = "confetti";
-    confetti.style.left = Math.random() * 100 + "%";
-    confetti.style.delay = Math.random() * 0.5 + "s";
-    confetti.style.backgroundColor = [
-      "#ffd700",
-      "#ff69b4",
-      "#00bfff",
-      "#32cd32",
-      "#ff6347"
-    ][Math.floor(Math.random() * 5)];
-    confettiContainer.appendChild(confetti);
-  }
-  
-  setTimeout(() => {
-    confettiContainer.innerHTML = "";
-  }, 3500);
-}
-
-// Restart Quiz
-restartButton.addEventListener("click", () => {
-  init();
+document.getElementById("restartButton").addEventListener("click", () => {
+  currentQuestionIndex = 0;
+  score = 0;
+  showNameScreen();
 });
 
-// Start the quiz
-init();
+showNameScreen();
