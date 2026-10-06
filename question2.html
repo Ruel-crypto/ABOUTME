@@ -98,6 +98,7 @@
       </div>
     </div>
 
+    <script src="effects.js"></script>
     <script>
       const buttons = document.querySelectorAll(".answer-btn");
       const result = document.getElementById("result");
@@ -110,6 +111,7 @@
           });
 
           const isCorrect = button.dataset.correct === "true";
+          showReaction(isCorrect);
 
           if (isCorrect) {
             button.classList.add("correct");

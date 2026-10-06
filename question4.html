@@ -91,6 +91,7 @@
       </div>
     </div>
 
+    <script src="effects.js"></script>
     <script>
       const buttons = document.querySelectorAll(".answer-btn");
       const result = document.getElementById("result");
@@ -100,6 +101,7 @@
         button.addEventListener("click", () => {
           buttons.forEach((btn) => btn.disabled = true);
           const isCorrect = button.dataset.correct === "true";
+          showReaction(isCorrect);
 
           if (isCorrect) {
             button.classList.add("correct");
