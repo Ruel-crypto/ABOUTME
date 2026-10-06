@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Question 5 - About Me Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-step="5">
+    <main class="stage">
+      <header class="hud" id="hud"></header>
+
+      <section class="card">
+        <h1 class="q">How many years have I been coding?</h1>
+        <div class="answers" role="group" aria-label="Answers">
+          <button class="tile" data-correct="false"><span class="key">1</span>1 year</button>
+          <button class="tile" data-correct="false"><span class="key">2</span>3 years</button>
+          <button class="tile" data-correct="true"><span class="key">3</span>5 years</button>
+          <button class="tile" data-correct="false"><span class="key">4</span>10+ years</button>
+        </div>
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+        <a id="next" class="btn" href="results.html" hidden>See my score</a>
+      </section>
+    </main>
+
+    <script src="effects.js"></script>
+    <script>
+      Quiz.multipleChoice({
+        right: "Correct! I've been coding for 5 years. 🔥",
+        wrong: "Not this time — it's been 5 years."
+      });
+    </script>
+  </body>
+</html>
