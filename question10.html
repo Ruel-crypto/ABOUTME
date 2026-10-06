@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Question 10 - Royal Fashion Show</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+* { box-sizing: border-box; }
+
+body { margin: 0; min-height: 100vh; }
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.card {
+  width: min(760px, 100%);
+  padding: clamp(18px, 4vw, 36px);
+  border-radius: 26px;
+  background: white;
+  text-align: center;
+  box-shadow: 0 15px 45px #0002;
+}
+
+.tag {
+  display: inline-block;
+  background: #f8e5ff;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+h1 {
+  font-size: clamp(25px, 5vw, 39px);
+  margin: 15px 0 8px;
+}
+
+p { line-height: 1.5; }
+
+.sub { opacity: .7; }
+
+.progress {
+  height: 8px;
+  background: #eee;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 18px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #e056fd, #686de0);
+  transition: width .3s;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  min-height: 330px;
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 35%, #fff 0%, #ffe8f5 48%, #e9ddff 100%);
+  border: 2px solid #f1d3f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage::before {
+  content: "✦  ✧  ✦  ✧  ✦";
+  position: absolute;
+  top: 18px;
+  width: 100%;
+  color: #c18bda;
+  font-size: 24px;
+  letter-spacing: 8px;
+}
+
+.portrait {
+  width: 100%;
+  height: 330px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  animation: enter .45s ease;
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: 280px;
+  object-fit: contain;
+  padding: 12px;
+}
+
+.emoji {
+  font-size: 125px;
+  filter: drop-shadow(0 8px 5px #0002);
+}
+
+.princess-name {
+  position: absolute;
+  bottom: 12px;
+  left: 10px;
+  right: 10px;
+  font-size: 20px;
+  font-weight: 900;
+  color: #57315f;
+  background: #ffffffdb;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.choice {
+  border: 2px solid #e7d7ef;
+  border-radius: 14px;
+  min-height: 57px;
+  padding: 12px;
+  background: #fff9ff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.choice:hover:not(:disabled) {
+  background: #f5e5ff;
+  transform: translateY(-2px);
+}
+
+.choice:disabled { cursor: default; }
+
+.choice.correct {
+  background: #d8ffe5;
+  border-color: #22a06b;
+}
+
+.choice.wrong {
+  background: #ffe1e1;
+  border-color: #df4545;
+}
+
+.feedback {
+  min-height: 30px;
+  margin-top: 15px;
+  font-weight: 900;
+}
+
+.final {
+  display: none;
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 18px;
+  background: #fff0c7;
+  animation: enter .5s ease;
+}
+
+.final.show { display: block; }
+
+.final .crown { font-size: 50px; }
+
+.continue {
+  display: inline-block;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: #252036;
+  color: white;
+  text-decoration: none;
+  font-weight: 900;
+  margin-top: 10px;
+}
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(15px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 420px) {
+  .stage { min-height: 290px; }
+  .portrait { height: 290px; }
+  .portrait img { height: 240px; }
+  .emoji { font-size: 100px; }
+  .choices { gap: 8px; }
+  .choice { font-size: 14px; padding: 10px 5px; }
+}
+</style>
+</head>
+
+<body data-step="10">
+<main class="page">
+<section class="card">
+
+  <span class="tag">QUESTION 10 · GRAND FINALE 👑</span>
+
+  <h1>✨ THE ROYAL FASHION SHOW ✨</h1>
+
+  <p class="sub">
+    Princesses are entering the runway one by one!
+    Who is my favorite Disney princess?
+  </p>
+
+  <div class="progress">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <p id="roundLabel"><strong>Contestant 1 of 5</strong></p>
+
+  <div class="stage">
+    <div class="portrait" id="portrait">
+      <div class="emoji">👸</div>
+      <div class="princess-name">The Royal Runway</div>
+    </div>
+  </div>
+
+  <div class="choices" id="choices">
+    <button class="choice" data-answer="Cinderella">Cinderella 👠</button>
+    <button class="choice" data-answer="Ariel">Ariel 🧜‍♀️</button>
+    <button class="choice" data-answer="Belle">Belle 🌹</button>
+    <button class="choice" data-answer="Jasmine">Princess Jasmine 💎</button>
+    <button class="choice" data-answer="Mulan">Mulan 🌸</button>
+  </div>
+
+  <div class="feedback" id="feedback" aria-live="polite">
+    Make your choice, fashion critic! 💅
+  </div>
+
+  <div class="final" id="final">
+    <div class="crown">👑💎👑</div>
+    <h2>IT'S PRINCESS JASMINE!</h2>
+    <p>
+      THE FAVORITE PRINCESS! 💙✨
+      <br><br>
+      You have completed all 10 questions!
+      Time to see how well you know me. 😎
+    </p>
+    <a class="continue" href="results.html">🏆 SEE MY RESULTS</a>
+  </div>
+
+</section>
+</main>
+
+<script src="effects.js"></script>
+<script>
+(() => {
+  const jasmineImage =
+    "https://i.etsystatic.com/23994028/r/il/8b6916/2449049474/il_fullxfull.2449049474_po33.jpg";
+
+  const princesses = [
+    { name: "Cinderella", emoji: "👸🏻", dress: "The Glass Slipper" },
+    { name: "Ariel", emoji: "🧜‍♀️", dress: "The Ocean Princess" },
+    { name: "Belle", emoji: "🌹", dress: "The Golden Gown" },
+    { name: "Jasmine", emoji: "💎", dress: "The Royal Favorite", image: jasmineImage },
+    { name: "Mulan", emoji: "🌸", dress: "The Warrior Princess" }
+  ];
+
+  const portrait = document.getElementById("portrait");
+  const choices = [...document.querySelectorAll(".choice")];
+  const feedback = document.getElementById("feedback");
+  const roundLabel = document.getElementById("roundLabel");
+  const progressFill = document.getElementById("progressFill");
+  const final = document.getElementById("final");
+
+  let round = 0;
+  let locked = false;
+
+  function showPrincess() {
+    const p = princesses[round];
+
+    roundLabel.innerHTML =
+      "<strong>Contestant " + (round + 1) + " of " +
+      princesses.length + "</strong>";
+
+    progressFill.style.width =
+      ((round + 1) / princesses.length * 100) + "%";
+
+    portrait.innerHTML = "";
+
+    if (p.image) {
+      const img = document.createElement("img");
+      img.src = p.image;
+      img.alt = "Princess Jasmine";
+      img.onerror = () => {
+        img.remove();
+        const fallback = document.createElement("div");
+        fallback.className = "emoji";
+        fallback.textContent = p.emoji;
+        portrait.prepend(fallback);
+      };
+      portrait.appendChild(img);
+    } else {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji";
+      emoji.textContent = p.emoji;
+      portrait.appendChild(emoji);
+    }
+
+    const name = document.createElement("div");
+    name.className = "princess-name";
+    name.textContent = p.name + " — " + p.dress;
+    portrait.appendChild(name);
+
+    feedback.textContent =
+      "Who is my favorite Disney princess? 👀";
+
+    choices.forEach(button => {
+      button.disabled = false;
+      button.classList.remove("correct", "wrong");
+    });
+  }
+
+  choices.forEach(button => {
+    button.addEventListener("click", () => {
+      if (locked) return;
+
+      const answer = button.dataset.answer;
+      const correct = answer === "Jasmine";
+
+      choices.forEach(b => {
+        b.disabled = true;
+        if (b.dataset.answer === "Jasmine") {
+          b.classList.add("correct");
+        }
+      });
+
+      if (!correct) {
+        button.classList.add("wrong");
+        feedback.textContent =
+          "Pretty princess, but that's not my favorite! 👀";
+
+        window.setTimeout(() => {
+          round++;
+
+          if (round < princesses.length) {
+            showPrincess();
+          } else {
+            round = 0;
+            showPrincess();
+          }
+        }, 1200);
+
+        return;
+      }
+
+      locked = true;
+      feedback.textContent =
+        "YESSS! PRINCESS JASMINE! 💎👑";
+
+      final.classList.add("show");
+
+      if (window.Quiz && typeof Quiz.answer === "function") {
+        Quiz.answer(
+          true,
+          "Correct! My favorite Disney princess is Jasmine! 👑",
+          "Not quite! My favorite is Princess Jasmine."
+        );
+      }
+
+      if (window.Quiz && typeof Quiz.confetti === "function") {
+        Quiz.confetti();
+      }
+    });
+  });
+
+  showPrincess();
+})();
+</script>
+</body>
+</html>
