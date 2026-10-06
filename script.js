@@ -2,17 +2,17 @@ const questions = [
   {
     question: "Who are you to the handsome man?",
     type: "input",
-    acceptedAnswers: ["co-worker", "coworker", "workmates", "officemates"],
+    acceptedAnswers: ["co-worker", "coworker", "workmates", "officemates","friend"],
     success: "Correct! You are definitely part of the team. 💼",
     fail: "Not quite. Try again!"
   },
   {
-    question: "What is my favorite programming language?",
+    question: "how old am i?",
     type: "multiple",
-    answers: ["Python", "JavaScript", "Go", "Rust"],
-    correctIndex: 1,
-    success: "Nice! JavaScript is my favorite. 🚀",
-    fail: "Close, but not quite. I love JavaScript."
+    answers: ["22", "23", "24", "25"],
+    correctIndex: 2,
+    success: "Nice! im so young ikr. 🚀",
+    fail: "Close, but not quite. I am 23 bruh."
   },
   {
     question: "What is my go-to drink?",
@@ -31,12 +31,12 @@ const questions = [
     fail: "Not quite. I’m more into gaming."
   },
   {
-    question: "How many years have I been coding?",
+    question: "what is the EXACT date i started in Bestdeeds?",
     type: "multiple",
-    answers: ["1 year", "3 years", "5 years", "10+ years"],
-    correctIndex: 2,
-    success: "Right! I’ve been coding for 5 years. 🔥",
-    fail: "Not this time. I’ve been at it for 5 years."
+    answers: ["August 20th", "August 25th", "August 21st", "August 24th"],
+    correctIndex: 4,
+    success: "Right! I’ve started that date! wowww galeng. 🔥",
+    fail: "Not this time. oh no, dimo alam, hala ka, 24th yon talaga."
   }
 ];
 
