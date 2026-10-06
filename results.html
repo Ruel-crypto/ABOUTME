@@ -1,1 +1,144 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Results - About Me Quiz</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head><body data-step="6"><main class="stage"><section class="card results"><h1 class="q">Final score</h1><div id="scored" hidden><div class="big-score" aria-live="polite"><span id="num">0</span><small>/6</small></div><p class="message" id="message"></p><img class="result-gif" id="gif" alt="" hidden><ul class="recap" id="recap"></ul></div><div id="empty" hidden><p class="message">No score yet. Take the quiz first!</p></div><a class="btn" id="again" href="index.html">Play again</a></section></main><script src="effects.js"></script><script>const labels=['Your name',"Richard's full name",'What he brought to the office','What he enjoys outside of work','Years of coding','Hungry food maze'];const state=Quiz.state(),total=Quiz.total;if(state.answered===0){document.getElementById('empty').hidden=false;document.getElementById('again').textContent='Start the quiz';}else{document.getElementById('scored').hidden=false;const p=Math.round(state.score/total*100);document.getElementById('message').textContent=p===100?'Perfect! You know me so well! 🌟':p>=80?'Awesome! You really know me! 🎉':p>=60?'Good job! You know me pretty well. 😊':p>=40?'Not bad at all! We should hang out more. 😄':'We need to get to know each other better! 😜';const url=Quiz.gif(state.score>=3);if(url){const g=document.getElementById('gif');g.src=url;g.alt=state.score>=3?'Happy reaction':'Angry reaction';g.hidden=false;g.onerror=()=>g.hidden=true;}const recap=document.getElementById('recap');labels.forEach((label,i)=>{const r=state.answers[i],li=document.createElement('li');li.className=r===true?'good':'bad';li.innerHTML='<span class="mark">'+(r===true?'✓':'✗')+'</span><span>'+label+'</span>';recap.appendChild(li);});document.getElementById('num').textContent=state.score;if(p>=80)setTimeout(Quiz.confetti,300);}document.getElementById('again').addEventListener('click',()=>Quiz.reset());</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Results - About Me Quiz</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body data-step="10">
+
+  <main class="stage">
+    <section class="card results">
+
+      <h1 class="q">Final score</h1>
+
+      <div id="scored" hidden>
+
+        <div class="big-score" aria-live="polite">
+          <span id="num">0</span>
+          <small>/10</small>
+        </div>
+
+        <p class="message" id="message"></p>
+
+        <img class="result-gif" id="gif" alt="" hidden>
+
+        <ul class="recap" id="recap"></ul>
+
+      </div>
+
+      <div id="empty" hidden>
+        <p class="message">No score yet. Take the quiz first!</p>
+      </div>
+
+      <a class="btn" id="again" href="index.html">Play again</a>
+
+    </section>
+  </main>
+
+  <script src="effects.js"></script>
+
+  <script>
+    const labels = [
+      'Your name',
+      "Richard's full name",
+      'What he brought to the office',
+      'What he enjoys outside of work',
+      'Years of coding',
+      'Hungry food maze',
+      'Help me get to work!',
+      'Question 8',
+      'Question 9',
+      'Question 10'
+    ];
+
+    const state = Quiz.state();
+    const total = Quiz.total;
+
+    if (state.answered === 0) {
+
+      document.getElementById('empty').hidden = false;
+      document.getElementById('again').textContent = 'Start the quiz';
+
+    } else {
+
+      document.getElementById('scored').hidden = false;
+
+      const p = Math.round((state.score / total) * 100);
+
+      document.getElementById('message').textContent =
+        p === 100
+          ? 'Perfect! You know me so well! 🌟'
+          : p >= 80
+            ? 'Awesome! You really know me! 🎉'
+            : p >= 60
+              ? 'Good job! You know me pretty well. 😊'
+              : p >= 40
+                ? 'Not bad at all! We should hang out more. 😄'
+                : 'We need to get to know each other better! 😜';
+
+      const url = Quiz.gif(state.score >= 5);
+
+      if (url) {
+
+        const g = document.getElementById('gif');
+
+        g.src = url;
+        g.alt = state.score >= 5
+          ? 'Happy reaction'
+          : 'Angry reaction';
+
+        g.hidden = false;
+
+        g.onerror = () => {
+          g.hidden = true;
+        };
+      }
+
+      const recap = document.getElementById('recap');
+
+      labels.forEach((label, i) => {
+
+        const r = state.answers[i];
+
+        const li = document.createElement('li');
+
+        li.className = r === true
+          ? 'good'
+          : r === false
+            ? 'bad'
+            : '';
+
+        li.innerHTML =
+          '<span class="mark">' +
+          (r === true ? '✓' : r === false ? '✗' : '—') +
+          '</span>' +
+          '<span>' +
+          label +
+          '</span>';
+
+        recap.appendChild(li);
+
+      });
+
+      document.getElementById('num').textContent = state.score;
+
+      if (p >= 80) {
+        setTimeout(Quiz.confetti, 300);
+      }
+    }
+
+    document.getElementById('again').addEventListener('click', () => {
+      Quiz.reset();
+    });
+  </script>
+
+</body>
+</html>
