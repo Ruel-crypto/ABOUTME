@@ -1,14 +1,17 @@
-QUESTION 6 CAKE MAZE
+CORRECTED ABOUTME 6-QUESTION VERSION
 
-Upload/replace these files in Ruel-crypto/ABOUTME:
-- question6.html (new)
-- question5.html (patched so Next goes to question6.html)
-- effects.js (patched total from 5 to 6)
-- results.html (patched to show /6 and include Question 6 in recap)
+Replace these files in the repository:
+- effects.js
+- question1.html
+- question5.html
+- question6.html
+- results.html
 
-The maze uses arrow keys or on-screen arrow buttons. The player is a woman and
-must collect six cake-themed foods. Collecting all six marks Question 6 correct
-and reveals the final-score button.
+Question 6 rules:
+GOOD: coffee, bread, cheese bread, pasta = +1 food score each.
+BAD/TRAPS: cake and soda = -1 food score each.
+Reach the man at the finish line. You need at least 3 good foods for Question 6 to be correct and earn the final +1 quiz point.
 
-IMPORTANT: Keep your existing style.css, index.html, question1.html,
-question2.html, question4.html, and drawing.html.
+Question 5 now says Next Question and goes to question6.html.
+The quiz engine is configured for 6 questions.
+Question 1 uses answers (not names), so its Submit button works.

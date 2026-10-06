@@ -1,146 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Question 6 - Cake Maze</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .maze-card{max-width:760px}
-    .maze-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
-    #maze{display:block;width:min(92vw,600px);height:auto;background:#fff;border-radius:18px;box-shadow:0 12px 35px rgba(0,0,0,.14);touch-action:none}
-    .maze-info{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
-    .maze-pill{padding:8px 13px;border-radius:999px;background:#f3f1ff;font-weight:700}
-    .controls{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,52px);gap:7px;justify-content:center}
-    .controls button{border:0;border-radius:14px;background:#fff;box-shadow:0 5px 15px rgba(0,0,0,.12);font-size:22px;font-weight:800;cursor:pointer;touch-action:manipulation}
-    .controls button:active{transform:scale(.94)}
-    .up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}
-    .maze-note{margin:0;text-align:center;opacity:.8}
-    .maze-done{display:none}
-    .maze-done.show{display:inline-flex}
-  </style>
-</head>
-<body data-step="6">
-  <main class="stage">
-    <header class="hud" id="hud"></header>
-    <section class="card maze-card">
-      <h1 class="q">Question 6: Cake Maze! 🎂</h1>
-      <p class="hint">Move the woman with the arrow keys and collect <strong>all the cakes</strong> in the maze.</p>
-
-      <div class="maze-wrap">
-        <div class="maze-info">
-          <span class="maze-pill" id="count">Cakes: 0 / 6</span>
-          <span class="maze-pill">🧍‍♀️ = You</span>
-          <span class="maze-pill">🍰 = Cake</span>
-        </div>
-        <canvas id="maze" width="600" height="600" aria-label="Cake maze game"></canvas>
-        <div class="controls" aria-label="Maze controls">
-          <button class="up" data-key="ArrowUp" aria-label="Up">⬆️</button>
-          <button class="left" data-key="ArrowLeft" aria-label="Left">⬅️</button>
-          <button class="down" data-key="ArrowDown" aria-label="Down">⬇️</button>
-          <button class="right" data-key="ArrowRight" aria-label="Right">➡️</button>
-        </div>
-        <p class="maze-note">Keyboard: ↑ ↓ ← → &nbsp; • &nbsp; You can also tap the buttons.</p>
-        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
-        <a id="next" class="btn maze-done" href="results.html">See my final score</a>
-      </div>
-    </section>
-  </main>
-
-<script src="effects.js"></script>
-<script>
-(() => {
-  const canvas = document.getElementById('maze');
-  const ctx = canvas.getContext('2d');
-  const count = document.getElementById('count');
-  const feedback = document.getElementById('feedback');
-  const next = document.getElementById('next');
-
-  const N = 15, cell = canvas.width / N;
-  // 1 = wall, 0 = path. The maze is deliberately solvable from start to finish.
-  const maze = [
-    '111111111111111',
-    '100000001000001',
-    '101111101011101',
-    '101000001010001',
-    '101011111011101',
-    '101010000010001',
-    '101010111110101',
-    '100010100000101',
-    '111010101111101',
-    '100010101000001',
-    '101110101011111',
-    '100000101000001',
-    '101111101111101',
-    '100000000000001',
-    '111111111111111'
-  ].map(r => [...r].map(Number));
-
-  let player = {x:1,y:1};
-  const cakes = [
-    {x:13,y:1,emoji:'🍰'},
-    {x:3,y:3,emoji:'🧁'},
-    {x:11,y:5,emoji:'🍰'},
-    {x:5,y:7,emoji:'🎂'},
-    {x:1,y:11,emoji:'🍰'},
-    {x:13,y:13,emoji:'🧁'}
-  ];
-  let collected = new Set();
-  let finished = false;
-
-  function drawEmoji(emoji,x,y,size){
-    ctx.font = size + 'px system-ui, Apple Color Emoji, Segoe UI Emoji';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(emoji, x, y);
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      ctx.fillStyle = maze[y][x] ? '#30254a' : '#fff8ef';
-      ctx.fillRect(x*cell,y*cell,cell,cell);
-      if(!maze[y][x]){
-        ctx.strokeStyle='rgba(70,50,90,.08)'; ctx.strokeRect(x*cell,y*cell,cell,cell);
-      }
-    }
-    cakes.forEach((c,i)=>{ if(!collected.has(i)) drawEmoji(c.emoji,(c.x+.5)*cell,(c.y+.52)*cell,28); });
-    drawEmoji('🧍‍♀️',(player.x+.5)*cell,(player.y+.52)*cell,30);
-    ctx.strokeStyle='rgba(255,92,138,.18)'; ctx.lineWidth=4; ctx.strokeRect(.5,.5,canvas.width-1,canvas.height-1);
-  }
-
-  function update(){
-    count.textContent = `Cakes: ${collected.size} / ${cakes.length}`;
-    if(collected.size === cakes.length && !finished){
-      finished = true;
-      feedback.className='feedback show good';
-      feedback.textContent='🎉 You collected every cake! You escaped the maze!';
-      next.classList.add('show');
-      Quiz.answer(true, 'You collected all the cakes! 🍰', '');
-    }
-  }
-
-  function move(dx,dy){
-    if(finished) return;
-    const nx=player.x+dx, ny=player.y+dy;
-    if(nx<0||ny<0||nx>=N||ny>=N||maze[ny][nx]) return;
-    player={x:nx,y:ny};
-    cakes.forEach((c,i)=>{if(c.x===player.x&&c.y===player.y) collected.add(i);});
-    draw(); update();
-  }
-
-  document.addEventListener('keydown',e=>{
-    const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
-    if(map[e.key]){e.preventDefault();move(...map[e.key]);}
-  });
-  document.querySelectorAll('.controls button').forEach(b=>{
-    const [dx,dy] = ({ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]})[b.dataset.key];
-    b.addEventListener('click',()=>move(dx,dy));
-  });
-  draw(); update();
-})();
-</script>
-</body>
-</html>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Question 6 - Hungry Food Maze</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+<style>
+.maze-card{max-width:980px}.maze-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}.maze-info{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.maze-pill{padding:8px 12px;border-radius:999px;background:#f3f1ff;font-weight:700}.maze-shell{width:min(94vw,840px);overflow:auto;padding:4px}.maze{display:block;width:100%;height:auto;min-width:650px;background:#fff8ef;border-radius:18px;box-shadow:0 12px 35px rgba(0,0,0,.14);touch-action:none}.controls{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,52px);gap:7px;justify-content:center}.controls button{border:0;border-radius:14px;background:#fff;box-shadow:0 5px 15px rgba(0,0,0,.12);font-size:22px;font-weight:800;cursor:pointer;touch-action:manipulation}.controls button:active{transform:scale(.94)}.up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}.maze-note{margin:0;text-align:center;opacity:.8}.maze-done{display:none}.maze-done.show{display:inline-flex}.legend{font-size:.95rem;text-align:center;line-height:1.5}.danger{font-weight:800}.goodfood{font-weight:800}
+</style></head>
+<body data-step="6"><main class="stage"><header class="hud" id="hud"></header><section class="card maze-card">
+<h1 class="q">🍽️ He's Hungry!</h1>
+<p class="hint">Help him get the foods he likes from the maze! Move the woman with the <strong>arrow keys</strong>, collect his favorite foods, avoid the foods he doesn't like, and reach <strong>him at the finish line</strong>. 🏁</p>
+<p class="hint"><strong>You need at least 3 foods he likes</strong> to answer this question correctly.</p>
+<div class="maze-info"><span class="maze-pill" id="goodCount">Liked foods: 0 / 3 minimum</span><span class="maze-pill" id="foodScore">Food score: 0</span><span class="maze-pill" id="finishStatus">🏁 Find him!</span></div>
+<div class="maze-shell"><canvas id="maze" class="maze" width="840" height="840" aria-label="Large food maze"></canvas></div>
+<div class="controls" aria-label="Maze controls"><button class="up" data-key="ArrowUp">⬆️</button><button class="left" data-key="ArrowLeft">⬅️</button><button class="down" data-key="ArrowDown">⬇️</button><button class="right" data-key="ArrowRight">➡️</button></div>
+<p class="legend"><span class="goodfood">☕ Coffee · 🍞 Bread · 🧀🍞 Cheese bread · 🍝 Pasta = foods he likes</span><br><span class="danger">🎂 Cake · 🥤 Soda = traps</span></p>
+<p class="maze-note">Use ↑ ↓ ← →. Collect at least 3 liked foods, then reach the man at the finish line.</p>
+<p id="feedback" class="feedback" role="status" aria-live="polite"></p><a id="next" class="btn maze-done" href="results.html">See My Final Score</a>
+</section></main>
+<script src="effects.js"></script><script>
+(()=>{
+const canvas=document.getElementById('maze'),ctx=canvas.getContext('2d'),goodEl=document.getElementById('goodCount'),scoreEl=document.getElementById('foodScore'),finishEl=document.getElementById('finishStatus'),feedback=document.getElementById('feedback'),next=document.getElementById('next');
+const N=31,cell=canvas.width/N;
+// Generate a large, connected, complicated maze with many dead ends.
+const grid=Array.from({length:N},()=>Array(N).fill(1));
+function carve(x,y){grid[y][x]=0;const dirs=[[2,0],[-2,0],[0,2],[0,-2]].sort(()=>Math.random()-.5);for(const [dx,dy] of dirs){const nx=x+dx,ny=y+dy;if(nx>0&&ny>0&&nx<N-1&&ny<N-1&&grid[ny][nx]===1){grid[y+dy/2][x+dx/2]=0;carve(nx,ny);}}}
+carve(1,1);grid[N-2][N-1]=0;grid[N-2][N-2]=0;
+let player={x:1,y:1};const finish={x:N-2,y:N-2};let good=0,bad=0,foodScore=0,ended=false;const collected=new Set();
+const path=[];for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++)if(grid[y][x]===0&&!(x===1&&y===1)&&!(x===finish.x&&y===finish.y))path.push({x,y});
+function shuffle(a){return a.sort(()=>Math.random()-.5)}shuffle(path);
+const goodFoods=[['☕','Coffee'],['🍞','Bread'],['🧀🍞','Cheese bread'],['🍝','Pasta']];
+const traps=[['🎂','Cake'],['🥤','Soda'],['🎂','Cake'],['🥤','Soda'],['🎂','Cake'],['🥤','Soda']];
+const items=[];for(let i=0;i<goodFoods.length;i++){const p=path.pop();items.push({x:p.x,y:p.y,good:true,emoji:goodFoods[i][0],name:goodFoods[i][1]});}for(let i=0;i<traps.length;i++){const p=path.pop();items.push({x:p.x,y:p.y,good:false,emoji:traps[i][0],name:traps[i][1]});}
+function emoji(e,x,y,size){ctx.font=size+'px system-ui, Apple Color Emoji, Segoe UI Emoji';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(e,x,y);}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);for(let y=0;y<N;y++)for(let x=0;x<N;x++){ctx.fillStyle=grid[y][x]?'#34294f':'#fff8ef';ctx.fillRect(x*cell,y*cell,cell,cell);}ctx.fillStyle='#d8ff9a';ctx.fillRect(finish.x*cell,finish.y*cell,cell,cell);emoji('🏁',(finish.x+.28)*cell,(finish.y+.5)*cell,Math.max(15,cell*.7));emoji('👨',(finish.x+.68)*cell,(finish.y+.52)*cell,Math.max(16,cell*.75));items.forEach((it,i)=>{if(!collected.has(i))emoji(it.emoji,(it.x+.5)*cell,(it.y+.52)*cell,Math.max(15,cell*.72));});emoji('👩',(player.x+.5)*cell,(player.y+.52)*cell,Math.max(15,cell*.75));ctx.strokeStyle='rgba(255,92,138,.2)';ctx.lineWidth=5;ctx.strokeRect(2,2,canvas.width-4,canvas.height-4);}
+function update(){goodEl.textContent=`Liked foods: ${good} / 3 minimum`;scoreEl.textContent=`Food score: ${foodScore>=0?'+':''}${foodScore}`;}
+function finishGame(){if(ended)return;ended=true;const correct=good>=3;finishEl.textContent=correct?'🏁 Reached him!':'🏁 Reached him — not enough liked foods';feedback.className='feedback show '+(correct?'good':'bad');feedback.textContent=correct?'🎉 You got enough of the foods he likes! Question 6 is correct (+1).':'😅 You reached him, but you need at least 3 foods he likes. Question 6 is wrong.';next.classList.add('show');Quiz.answer(correct,correct?'You got at least 3 foods he likes!':'You reached the finish, but missed the 3-food quota.','You reached the finish, but missed the 3-food quota.');}
+function move(dx,dy){if(ended)return;const nx=player.x+dx,ny=player.y+dy;if(nx<0||ny<0||nx>=N||ny>=N||grid[ny][nx])return;player={x:nx,y:ny};items.forEach((it,i)=>{if(!collected.has(i)&&it.x===player.x&&it.y===player.y){collected.add(i);if(it.good){good++;foodScore++;feedback.className='feedback show good';feedback.textContent='✅ '+it.name+' collected!';}else{bad++;foodScore--;feedback.className='feedback show bad';feedback.textContent='⚠️ '+it.name+' is a trap! Food score -1.';}}});update();draw();if(player.x===finish.x&&player.y===finish.y)finishGame();}
+document.addEventListener('keydown',e=>{const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};if(m[e.key]){e.preventDefault();move(...m[e.key]);}});document.querySelectorAll('.controls button').forEach(b=>{const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};b.addEventListener('click',()=>move(...m[b.dataset.key]));});update();draw();
+})();</script></body></html>
