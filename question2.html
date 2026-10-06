@@ -3,130 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Question 2</title>
-    <style>
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .container { width: 100%; max-width: 600px; }
-      .card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-      }
-      .top {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 30px 20px 20px;
-        text-align: center;
-      }
-      h1 { margin: 0; font-size: 2.2em; }
-      .content { padding: 30px 20px 40px; }
-      h2 { text-align: center; margin-bottom: 20px; }
-      .answers {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .answer-btn {
-        width: 100%;
-        padding: 16px 18px;
-        border: 2px solid #dfe3f0;
-        border-radius: 12px;
-        font-size: 1em;
-        background: #f8f8fb;
-        cursor: pointer;
-        text-align: left;
-      }
-      .answer-btn:hover { border-color: #667eea; }
-      .correct { background: #2bb673; border-color: #2bb673; color: white; }
-      .incorrect { background: #db3b3b; border-color: #db3b3b; color: white; }
-      .result {
-        margin-top: 20px;
-        text-align: center;
-        display: none;
-        font-weight: 700;
-      }
-      .result.show { display: block; }
-      .result.correct { color: #2bb673; }
-      .result.incorrect { color: #db3b3b; }
-      .next-btn {
-        display: inline-block;
-        margin-top: 20px;
-        width: 100%;
-        text-align: center;
-        text-decoration: none;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 16px;
-        border-radius: 12px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        display: none;
-      }
-      .next-btn.show { display: inline-block; }
-    </style>
+    <title>Question 2 - About Me Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
-    <div class="container">
-      <div class="card">
-        <header class="top">
-          <h1>About Me Quiz</h1>
-        </header>
-        <div class="content">
-          <h2>What's Richard's full name?</h2>
-          <div class="answers">
-            <button class="answer-btn" data-correct="false">Richard Bundalian</button>
-            <button class="answer-btn" data-correct="false">Richard Basco</button>
-            <button class="answer-btn" data-correct="true">Richard Budlong</button>
-            <button class="answer-btn" data-correct="false">Richard Gomez</button>
-          </div>
+  <body data-step="2">
+    <main class="stage">
+      <header class="hud" id="hud"></header>
 
-          <div id="result" class="result"></div>
-          <a id="nextBtn" class="next-btn" href="drawing.html">Continue</a>
+      <section class="card">
+        <h1 class="q">What's Richard's full name?</h1>
+        <div class="answers" role="group" aria-label="Answers">
+          <button class="tile" data-correct="false"><span class="key">1</span>Richard Bundalian</button>
+          <button class="tile" data-correct="false"><span class="key">2</span>Richard Basco</button>
+          <button class="tile" data-correct="true"><span class="key">3</span>Richard Budlong</button>
+          <button class="tile" data-correct="false"><span class="key">4</span>Richard Gomez</button>
         </div>
-      </div>
-    </div>
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+        <a id="next" class="btn" href="drawing.html" hidden>Next question</a>
+      </section>
+    </main>
 
     <script src="effects.js"></script>
     <script>
-      const buttons = document.querySelectorAll(".answer-btn");
-      const result = document.getElementById("result");
-      const nextBtn = document.getElementById("nextBtn");
-
-      buttons.forEach((button) => {
-        button.addEventListener("click", () => {
-          buttons.forEach((btn) => {
-            btn.disabled = true;
-          });
-
-          const isCorrect = button.dataset.correct === "true";
-          showReaction(isCorrect);
-
-          if (isCorrect) {
-            button.classList.add("correct");
-            result.textContent = "Correct! That's my full name! 👋";
-            result.className = "result show correct";
-          } else {
-            button.classList.add("incorrect");
-            result.textContent = "Not quite — I'm Richard Budlong!";
-            result.className = "result show incorrect";
-            const correctButton = [...buttons].find((btn) => btn.dataset.correct === "true");
-            if (correctButton) correctButton.classList.add("correct");
-          }
-
-          nextBtn.classList.add("show");
-        });
+      Quiz.multipleChoice({
+        right: "Correct! That's my full name! 👋",
+        wrong: "Not quite — I'm Richard Budlong!"
       });
     </script>
   </body>

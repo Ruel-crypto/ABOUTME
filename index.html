@@ -4,62 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About Me Quiz</title>
-    <style>
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .container { width: 100%; max-width: 600px; }
-      .card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-      }
-      .top {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 40px 20px 20px;
-        text-align: center;
-      }
-      h1 { margin: 0; font-size: 2.5em; }
-      .content {
-        padding: 30px 20px 40px;
-        text-align: center;
-      }
-      .start-btn {
-        display: inline-block;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        text-decoration: none;
-        padding: 16px 28px;
-        border-radius: 12px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        margin-top: 20px;
-      }
-      p { color: #555; font-size: 1.1em; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
-    <div class="container">
-      <div class="card">
-        <header class="top">
-          <h1>About Me Quiz</h1>
-        </header>
-        <div class="content">
-          <p>Welcome! Ready to test how well you know me?</p>
-          <a class="start-btn" href="question1.html">Start</a>
-        </div>
+  <body data-step="0">
+    <main class="stage">
+      <div class="hero">
+        <span class="badge">5 questions, 1 drawing</span>
+        <h1>How well do you know Richard?</h1>
+        <p class="lead">Welcome! Ready to test how well you know me?</p>
+        <a class="start" id="start" href="question1.html">Start the quiz</a>
+        <p class="tip">Tip: on a keyboard, press 1 to 4 to answer.</p>
       </div>
-    </div>
+    </main>
+
+    <script src="effects.js"></script>
+    <script>
+      // A new run always starts with a clean score.
+      Quiz.reset();
+    </script>
   </body>
 </html>
