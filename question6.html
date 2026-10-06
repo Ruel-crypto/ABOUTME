@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Question 6 - Cake Maze</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .maze-card{max-width:760px}
+    .maze-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+    #maze{display:block;width:min(92vw,600px);height:auto;background:#fff;border-radius:18px;box-shadow:0 12px 35px rgba(0,0,0,.14);touch-action:none}
+    .maze-info{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+    .maze-pill{padding:8px 13px;border-radius:999px;background:#f3f1ff;font-weight:700}
+    .controls{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,52px);gap:7px;justify-content:center}
+    .controls button{border:0;border-radius:14px;background:#fff;box-shadow:0 5px 15px rgba(0,0,0,.12);font-size:22px;font-weight:800;cursor:pointer;touch-action:manipulation}
+    .controls button:active{transform:scale(.94)}
+    .up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}
+    .maze-note{margin:0;text-align:center;opacity:.8}
+    .maze-done{display:none}
+    .maze-done.show{display:inline-flex}
+  </style>
+</head>
+<body data-step="6">
+  <main class="stage">
+    <header class="hud" id="hud"></header>
+    <section class="card maze-card">
+      <h1 class="q">Question 6: Cake Maze! 🎂</h1>
+      <p class="hint">Move the woman with the arrow keys and collect <strong>all the cakes</strong> in the maze.</p>
+
+      <div class="maze-wrap">
+        <div class="maze-info">
+          <span class="maze-pill" id="count">Cakes: 0 / 6</span>
+          <span class="maze-pill">🧍‍♀️ = You</span>
+          <span class="maze-pill">🍰 = Cake</span>
+        </div>
+        <canvas id="maze" width="600" height="600" aria-label="Cake maze game"></canvas>
+        <div class="controls" aria-label="Maze controls">
+          <button class="up" data-key="ArrowUp" aria-label="Up">⬆️</button>
+          <button class="left" data-key="ArrowLeft" aria-label="Left">⬅️</button>
+          <button class="down" data-key="ArrowDown" aria-label="Down">⬇️</button>
+          <button class="right" data-key="ArrowRight" aria-label="Right">➡️</button>
+        </div>
+        <p class="maze-note">Keyboard: ↑ ↓ ← → &nbsp; • &nbsp; You can also tap the buttons.</p>
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+        <a id="next" class="btn maze-done" href="results.html">See my final score</a>
+      </div>
+    </section>
+  </main>
+
+<script src="effects.js"></script>
+<script>
+(() => {
+  const canvas = document.getElementById('maze');
+  const ctx = canvas.getContext('2d');
+  const count = document.getElementById('count');
+  const feedback = document.getElementById('feedback');
+  const next = document.getElementById('next');
+
+  const N = 15, cell = canvas.width / N;
+  // 1 = wall, 0 = path. The maze is deliberately solvable from start to finish.
+  const maze = [
+    '111111111111111',
+    '100000001000001',
+    '101111101011101',
+    '101000001010001',
+    '101011111011101',
+    '101010000010001',
+    '101010111110101',
+    '100010100000101',
+    '111010101111101',
+    '100010101000001',
+    '101110101011111',
+    '100000101000001',
+    '101111101111101',
+    '100000000000001',
+    '111111111111111'
+  ].map(r => [...r].map(Number));
+
+  let player = {x:1,y:1};
+  const cakes = [
+    {x:13,y:1,emoji:'🍰'},
+    {x:3,y:3,emoji:'🧁'},
+    {x:11,y:5,emoji:'🍰'},
+    {x:5,y:7,emoji:'🎂'},
+    {x:1,y:11,emoji:'🍰'},
+    {x:13,y:13,emoji:'🧁'}
+  ];
+  let collected = new Set();
+  let finished = false;
+
+  function drawEmoji(emoji,x,y,size){
+    ctx.font = size + 'px system-ui, Apple Color Emoji, Segoe UI Emoji';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(emoji, x, y);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      ctx.fillStyle = maze[y][x] ? '#30254a' : '#fff8ef';
+      ctx.fillRect(x*cell,y*cell,cell,cell);
+      if(!maze[y][x]){
+        ctx.strokeStyle='rgba(70,50,90,.08)'; ctx.strokeRect(x*cell,y*cell,cell,cell);
+      }
+    }
+    cakes.forEach((c,i)=>{ if(!collected.has(i)) drawEmoji(c.emoji,(c.x+.5)*cell,(c.y+.52)*cell,28); });
+    drawEmoji('🧍‍♀️',(player.x+.5)*cell,(player.y+.52)*cell,30);
+    ctx.strokeStyle='rgba(255,92,138,.18)'; ctx.lineWidth=4; ctx.strokeRect(.5,.5,canvas.width-1,canvas.height-1);
+  }
+
+  function update(){
+    count.textContent = `Cakes: ${collected.size} / ${cakes.length}`;
+    if(collected.size === cakes.length && !finished){
+      finished = true;
+      feedback.className='feedback show good';
+      feedback.textContent='🎉 You collected every cake! You escaped the maze!';
+      next.classList.add('show');
+      Quiz.answer(true, 'You collected all the cakes! 🍰', '');
+    }
+  }
+
+  function move(dx,dy){
+    if(finished) return;
+    const nx=player.x+dx, ny=player.y+dy;
+    if(nx<0||ny<0||nx>=N||ny>=N||maze[ny][nx]) return;
+    player={x:nx,y:ny};
+    cakes.forEach((c,i)=>{if(c.x===player.x&&c.y===player.y) collected.add(i);});
+    draw(); update();
+  }
+
+  document.addEventListener('keydown',e=>{
+    const map={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+    if(map[e.key]){e.preventDefault();move(...map[e.key]);}
+  });
+  document.querySelectorAll('.controls button').forEach(b=>{
+    const [dx,dy] = ({ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]})[b.dataset.key];
+    b.addEventListener('click',()=>move(dx,dy));
+  });
+  draw(); update();
+})();
+</script>
+</body>
+</html>
