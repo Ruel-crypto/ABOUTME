@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Question 7 - Can I Trust You?</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.runner-card{
+  max-width:1000px;
+}
+
+.runner-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+
+.runner-info{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.runner-pill{
+  padding:9px 14px;
+  border-radius:999px;
+  background:#f3f1ff;
+  font-weight:800;
+}
+
+.runner-pill.danger{
+  background:#ffe7e7;
+}
+
+.runner-shell{
+  width:min(960px,94vw);
+  margin:auto;
+}
+
+#runnerGame{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:20px;
+  background:#dff3ff;
+  box-shadow:0 14px 40px rgba(0,0,0,.16);
+  touch-action:none;
+}
+
+.jump-button{
+  border:0;
+  border-radius:18px;
+  padding:15px 35px;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  font-size:20px;
+  font-weight:900;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.jump-button:active{
+  transform:scale(.94);
+}
+
+.start-button{
+  border:0;
+  border-radius:16px;
+  padding:13px 28px;
+  font-size:18px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 20px rgba(0,0,0,.15);
+}
+
+.game-message{
+  text-align:center;
+  min-height:48px;
+  font-weight:800;
+  line-height:1.4;
+}
+
+.runner-note{
+  margin:0;
+  text-align:center;
+  opacity:.8;
+}
+
+.game-over{
+  display:none;
+  text-align:center;
+  padding:20px;
+  border-radius:18px;
+  background:#fff1f1;
+}
+
+.game-over.show{
+  display:block;
+}
+
+.game-over h2{
+  margin:0 0 8px;
+  font-size:30px;
+}
+
+.game-over p{
+  margin:0;
+}
+
+@media(max-width:600px){
+  .runner-shell{
+    width:96vw;
+  }
+
+  .jump-button{
+    width:min(300px,90vw);
+  }
+}
+</style>
+</head>
+
+<body data-step="7">
+
+<main class="stage">
+
+<header class="hud" id="hud"></header>
+
+<section class="card runner-card">
+
+<h1 class="q">🏃‍♂️ Can I Trust You?</h1>
+
+<p class="hint">
+  <strong>I'm late for work!</strong> 😭
+  I trust you. Help me get to the office!
+</p>
+
+<p class="hint">
+  Keep me alive for <strong>20 seconds</strong>.
+  Don't let me hit anything!
+</p>
+
+<div class="runner-info">
+  <span class="runner-pill" id="timer">⏱️ 20.0s</span>
+  <span class="runner-pill" id="status">🏃 Waiting...</span>
+</div>
+
+<div class="runner-shell">
+  <canvas
+    id="runnerGame"
+    width="960"
+    height="420"
+    aria-label="Running game"
+  ></canvas>
+</div>
+
+<div id="message" class="game-message">
+  Press START when you're ready.
+</div>
+
+<button id="startButton" class="start-button">
+  ▶ START RUNNING
+</button>
+
+<button id="jumpButton" class="jump-button" hidden>
+  ⬆️ JUMP
+</button>
+
+<p class="runner-note">
+  Use ↑ or SPACE to jump. On mobile, use the JUMP button.
+</p>
+
+<div id="gameOver" class="game-over">
+  <h2 id="gameOverTitle"></h2>
+  <p id="gameOverText"></p>
+</div>
+
+<p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+
+<a id="next" class="btn" href="question8.html" hidden>
+  Continue →
+</a>
+
+</section>
+</main>
+
+<script src="effects.js"></script>
+
+<script>
+(() => {
+  "use strict";
+
+  const canvas = document.getElementById("runnerGame");
+  const ctx = canvas.getContext("2d");
+
+  const timerEl = document.getElementById("timer");
+  const statusEl = document.getElementById("status");
+  const messageEl = document.getElementById("message");
+  const startButton = document.getElementById("startButton");
+  const jumpButton = document.getElementById("jumpButton");
+  const gameOver = document.getElementById("gameOver");
+  const gameOverTitle = document.getElementById("gameOverTitle");
+  const gameOverText = document.getElementById("gameOverText");
+  const next = document.getElementById("next");
+
+  const WIDTH = canvas.width;
+  const HEIGHT = canvas.height;
+  const GROUND = 350;
+
+  const GAME_LENGTH = 20000;
+
+  let running = false;
+  let finished = false;
+  let startTime = 0;
+  let lastTime = 0;
+  let animationFrame = null;
+
+  let obstacleTimer = 0;
+  let animalTimer = 0;
+
+  let speed = 5;
+
+  const player = {
+    x: 125,
+    y: GROUND - 72,
+    width: 48,
+    height: 72,
+    vy: 0,
+    jumping: false
+  };
+
+  let obstacles = [];
+  let particles = [];
+
+  /*
+   * Different obstacles.
+   */
+  const obstacleTypes = [
+    {
+      emoji: "📦",
+      width: 52,
+      height: 52,
+      type: "ground"
+    },
+    {
+      emoji: "🚗",
+      width: 86,
+      height: 48,
+      type: "ground"
+    },
+    {
+      emoji: "🪑",
+      width: 55,
+      height: 58,
+      type: "ground"
+    },
+    {
+      emoji: "🛒",
+      width: 65,
+      height: 52,
+      type: "ground"
+    }
+  ];
+
+  /*
+   * Animals used after the 10-second difficulty spike.
+   * They start above the screen and move diagonally toward the runner.
+   */
+  const animalTypes = [
+    {
+      emoji: "🐈",
+      width: 52,
+      height: 52
+    },
+    {
+      emoji: "🐕",
+      width: 58,
+      height: 55
+    },
+    {
+      emoji: "🐈‍⬛",
+      width: 52,
+      height: 52
+    }
+  ];
+
+  function randomItem(list){
+    return list[Math.floor(Math.random() * list.length)];
+  }
+
+  function drawEmoji(emoji, x, y, size){
+    ctx.font = size + "px system-ui, Apple Color Emoji, Segoe UI Emoji";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(emoji, x, y);
+  }
+
+  function drawBackground(elapsed){
+    /*
+     * Sky
+     */
+    ctx.fillStyle = "#dff3ff";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    /*
+     * Sun
+     */
+    drawEmoji("☀️", 820, 75, 55);
+
+    /*
+     * Clouds
+     */
+    const cloudOffset = (elapsed * 0.015) % 1100;
+
+    drawEmoji("☁️", 170 - cloudOffset, 90, 60);
+    drawEmoji("☁️", 500 - cloudOffset, 125, 55);
+    drawEmoji("☁️", 900 - cloudOffset, 105, 65);
+
+    drawEmoji("☁️", 1270 - cloudOffset, 90, 60);
+    drawEmoji("☁️", 1600 - cloudOffset, 130, 55);
+
+    /*
+     * Buildings.
+     */
+    const buildingOffset = (elapsed * 0.08) % 220;
+
+    for(let i = -1; i < 8; i++){
+      const x = i * 150 - buildingOffset;
+
+      ctx.fillStyle = "#b9c7d9";
+      ctx.fillRect(x, 235, 105, 115);
+
+      ctx.fillStyle = "#f7fbff";
+
+      for(let wy = 250; wy < 325; wy += 27){
+        for(let wx = x + 15; wx < x + 90; wx += 25){
+          ctx.fillRect(wx, wy, 10, 12);
+        }
+      }
+    }
+
+    /*
+     * Ground.
+     */
+    ctx.fillStyle = "#8bcf72";
+    ctx.fillRect(0, GROUND, WIDTH, HEIGHT - GROUND);
+
+    ctx.fillStyle = "#4f9f4b";
+    ctx.fillRect(0, GROUND, WIDTH, 8);
+
+    /*
+     * Road.
+     */
+    ctx.fillStyle = "#555";
+    ctx.fillRect(0, GROUND + 8, WIDTH, HEIGHT - GROUND - 8);
+
+    /*
+     * Road markings.
+     */
+    const roadOffset = (elapsed * speed * 0.7) % 90;
+
+    ctx.fillStyle = "#fff";
+
+    for(let x = -100 + roadOffset; x < WIDTH + 100; x += 90){
+      ctx.fillRect(x, GROUND + 42, 50, 7);
+    }
+  }
+
+  function drawOffice(){
+    /*
+     * Office building appears near the end.
+     */
+    ctx.fillStyle = "#e7e1d2";
+    ctx.fillRect(770, 155, 150, 195);
+
+    ctx.fillStyle = "#ffffff";
+
+    for(let y = 180; y < 280; y += 35){
+      ctx.fillRect(790, y, 32, 22);
+      ctx.fillRect(845, y, 32, 22);
+    }
+
+    ctx.fillStyle = "#473b52";
+    ctx.fillRect(820, 295, 55, 55);
+
+    drawEmoji("🏢", 845, 135, 55);
+  }
+
+  function drawPlayer(elapsed){
+    /*
+     * Running animation.
+     */
+    const runningFrame =
+      Math.floor(elapsed / 100) % 2;
+
+    const bob =
+      running && !player.jumping
+        ? (runningFrame ? -3 : 2)
+        : 0;
+
+    drawEmoji(
+      "🏃‍♂️",
+      player.x + player.width / 2,
+      player.y + player.height / 2 + bob,
+      68
+    );
+  }
+
+  function drawObstacle(ob){
+    drawEmoji(
+      ob.emoji,
+      ob.x + ob.width / 2,
+      ob.y + ob.height / 2,
+      Math.max(ob.width, ob.height) * 0.9
+    );
+  }
+
+  function draw(){
+    const elapsed = running
+      ? performance.now() - startTime
+      : 0;
+
+    drawBackground(elapsed);
+
+    /*
+     * Office becomes visible near the finish.
+     */
+    if(elapsed > 17000){
+      drawOffice();
+    }
+
+    obstacles.forEach(drawObstacle);
+
+    drawPlayer(elapsed);
+
+    /*
+     * Speed lines during the thrill phase.
+     */
+    if(elapsed >= 10000 && running){
+      ctx.strokeStyle = "rgba(255,255,255,.5)";
+      ctx.lineWidth = 3;
+
+      for(let i = 0; i < 7; i++){
+        const x = Math.random() * WIDTH;
+        const y = 40 + Math.random() * 260;
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 30, y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function jump(){
+    if(!running || finished) return;
+
+    if(!player.jumping){
+      player.vy = -15;
+      player.jumping = true;
+    }
+  }
+
+  function spawnGroundObstacle(){
+    const type = randomItem(obstacleTypes);
+
+    obstacles.push({
+      emoji: type.emoji,
+      width: type.width,
+      height: type.height,
+      x: WIDTH + 30,
+      y: GROUND - type.height,
+      vx: speed
+    });
+  }
+
+  function spawnAnimal(){
+    const type = randomItem(animalTypes);
+
+    /*
+     * Animals attack from above and move diagonally toward the runner.
+     */
+    const startX =
+      player.x +
+      180 +
+      Math.random() * 500;
+
+    obstacles.push({
+      emoji: type.emoji,
+      width: type.width,
+      height: type.height,
+      x: startX,
+      y: -70 - Math.random() * 100,
+
+      /*
+       * Diagonal movement toward the ground/player.
+       */
+      vx: speed * (0.75 + Math.random() * 0.45),
+      vy: 3.8 + Math.random() * 2.5,
+
+      animal: true
+    });
+  }
+
+  function playerBox(){
+    /*
+     * Smaller hitbox makes collisions feel fair.
+     */
+    return {
+      x: player.x + 10,
+      y: player.y + 8,
+      width: player.width - 20,
+      height: player.height - 12
+    };
+  }
+
+  function obstacleBox(ob){
+    return {
+      x: ob.x + 8,
+      y: ob.y + 8,
+      width: ob.width - 16,
+      height: ob.height - 12
+    };
+  }
+
+  function touching(a,b){
+    return (
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y
+    );
+  }
+
+  function createDeathParticles(){
+    particles = [];
+
+    for(let i = 0; i < 35; i++){
+      particles.push({
+        x: player.x + 25,
+        y: player.y + 35,
+        vx: -5 + Math.random() * 10,
+        vy: -7 + Math.random() * 5,
+        life: 1,
+        emoji: randomItem(["💥","💫","😵","💀"])
+      });
+    }
+  }
+
+  function drawParticles(){
+    particles.forEach(p => {
+      drawEmoji(p.emoji, p.x, p.y, 24);
+    });
+  }
+
+  function updateParticles(dt){
+    particles.forEach(p => {
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 0.35 * dt;
+      p.life -= 0.025 * dt;
+    });
+
+    particles = particles.filter(p => p.life > 0);
+  }
+
+  function die(){
+    if(finished) return;
+
+    finished = true;
+    running = false;
+
+    createDeathParticles();
+
+    statusEl.textContent = "💀 GAME OVER";
+    messageEl.textContent = "I trusted you... 😭";
+
+    gameOverTitle.textContent = "💀 YOU KILLED ME!";
+    gameOverText.textContent =
+      "I was supposed to be at work... but you crashed me into something. 😭";
+
+    gameOver.classList.add("show");
+
+    /*
+     * Q7 = WRONG.
+     */
+    Quiz.answer(
+      false,
+      "",
+      "You killed me before I got to work. 😭"
+    );
+
+    next.hidden = false;
+    next.textContent = "Continue →";
+
+    jumpButton.hidden = true;
+  }
+
+  function win(){
+    if(finished) return;
+
+    finished = true;
+    running = false;
+
+    statusEl.textContent = "🏢 MADE IT!";
+    messageEl.textContent = "YOU SAVED ME! ❤️";
+
+    gameOverTitle.textContent = "🎉 YOU SAVED ME!";
+    gameOverText.textContent =
+      "You got me to work! I knew I could trust you. 🥹❤️";
+
+    gameOver.classList.add("show");
+
+    /*
+     * Q7 = CORRECT.
+     */
+    Quiz.answer(
+      true,
+      "You got me safely to work! I knew I could trust you! ❤️",
+      ""
+    );
+
+    next.hidden = false;
+    next.textContent = "Continue →";
+
+    jumpButton.hidden = true;
+  }
+
+  function update(dt, now){
+    if(!running) return;
+
+    const elapsed = now - startTime;
+
+    /*
+     * FIRST 10 SECONDS
+     * Normal gameplay.
+     */
+    if(elapsed < 10000){
+      speed = 5 + elapsed / 5000;
+    }
+
+    /*
+     * EXACTLY 10 SECONDS:
+     * THRILL PHASE.
+     */
+    else{
+      speed = 8.5 + Math.min(3, (elapsed - 10000) / 3000);
+
+      if(elapsed >= 10000 && elapsed < 10400){
+        statusEl.textContent = "🚨 WATCH OUT!";
+        messageEl.textContent =
+          "🚨 THE ANIMALS ARE COMING! DON'T LET THEM GET ME!";
+      }else{
+        statusEl.textContent = "🔥 THRILL MODE!";
+      }
+    }
+
+    /*
+     * Player physics.
+     */
+    player.y += player.vy * dt;
+    player.vy += 0.75 * dt;
+
+    if(player.y >= GROUND - player.height){
+      player.y = GROUND - player.height;
+      player.vy = 0;
+      player.jumping = false;
+    }
+
+    /*
+     * Ground obstacle spawning.
+     */
+    obstacleTimer -= dt * 16.67;
+
+    const obstacleDelay =
+      elapsed < 10000
+        ? 1250 - Math.min(400, elapsed / 30)
+        : 750;
+
+    if(obstacleTimer <= 0){
+      spawnGroundObstacle();
+      obstacleTimer = obstacleDelay;
+    }
+
+    /*
+     * Animal spawning begins at 10 seconds.
+     */
+    if(elapsed >= 10000){
+      animalTimer -= dt * 16.67;
+
+      const animalDelay =
+        Math.max(520, 1050 - (elapsed - 10000) / 12);
+
+      if(animalTimer <= 0){
+        spawnAnimal();
+        animalTimer = animalDelay;
+      }
+    }
+
+    /*
+     * Move obstacles.
+     */
+    obstacles.forEach(ob => {
+      ob.x -= ob.vx * dt;
+
+      if(ob.animal){
+        ob.y += ob.vy * dt;
+
+        /*
+         * Animals angle downward toward the road.
+         */
+        ob.vy += 0.10 * dt;
+      }
+    });
+
+    /*
+     * Collision detection.
+     */
+    const pb = playerBox();
+
+    for(const ob of obstacles){
+      const obb = obstacleBox(ob);
+
+      if(touching(pb,obb)){
+        die();
+        return;
+      }
+    }
+
+    /*
+     * Remove objects that are far behind.
+     */
+    obstacles =
+      obstacles.filter(ob =>
+        ob.x > -150 &&
+        ob.y < HEIGHT + 150
+      );
+
+    /*
+     * Timer.
+     */
+    const remaining =
+      Math.max(0, (GAME_LENGTH - elapsed) / 1000);
+
+    timerEl.textContent =
+      "⏱️ " + remaining.toFixed(1) + "s";
+
+    /*
+     * WIN at exactly 20 seconds.
+     */
+    if(elapsed >= GAME_LENGTH){
+      win();
+    }
+  }
+
+  function loop(now){
+    if(!lastTime) lastTime = now;
+
+    const dt =
+      Math.min(2, (now - lastTime) / 16.67);
+
+    lastTime = now;
+
+    update(dt, now);
+    draw();
+    updateParticles(dt);
+    drawParticles();
+
+    animationFrame =
+      requestAnimationFrame(loop);
+  }
+
+  function startGame(){
+    if(running || finished) return;
+
+    running = true;
+    finished = false;
+
+    startTime = performance.now();
+    lastTime = startTime;
+
+    obstacles = [];
+    particles = [];
+
+    player.y = GROUND - player.height;
+    player.vy = 0;
+    player.jumping = false;
+
+    obstacleTimer = 900;
+    animalTimer = 900;
+
+    speed = 5;
+
+    startButton.hidden = true;
+    jumpButton.hidden = false;
+    gameOver.classList.remove("show");
+
+    timerEl.textContent = "⏱️ 20.0s";
+    statusEl.textContent = "🏃 RUNNING!";
+    messageEl.textContent = "COME ON! HELP ME GET TO WORK! 😭";
+
+    cancelAnimationFrame(animationFrame);
+    animationFrame = requestAnimationFrame(loop);
+  }
+
+  /*
+   * Keyboard controls.
+   */
+  document.addEventListener("keydown", e => {
+    if(
+      e.key === "ArrowUp" ||
+      e.key === " " ||
+      e.code === "Space"
+    ){
+      e.preventDefault();
+
+      if(!running && !finished){
+        startGame();
+      }else{
+        jump();
+      }
+    }
+  });
+
+  /*
+   * Start button.
+   */
+  startButton.addEventListener("click", startGame);
+
+  /*
+   * Mobile jump.
+   */
+  jumpButton.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    jump();
+  });
+
+  /*
+   * Initial drawing.
+   */
+  draw();
+
+})();
+</script>
+
+</body>
+</html>
