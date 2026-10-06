@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Question 7 - Get Me To Work!</title>
+
+<title>Question 7 - Help Me Get To Work!</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +13,7 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
+
 * {
   box-sizing: border-box;
 }
@@ -23,384 +25,527 @@ body {
   overflow-x: hidden;
 }
 
+/* =========================
+   MAIN CARD
+========================= */
+
 .game-page {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 18px;
+  padding: 14px;
 }
 
 .game-card {
-  width: min(1100px, 100%);
-  padding: 22px;
-  border-radius: 28px;
-  background: rgba(255,255,255,.96);
-  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  width: min(1050px, 100%);
+  background: rgba(255,255,255,.97);
+  border-radius: 26px;
+  padding: 20px;
+  box-shadow: 0 18px 55px rgba(0,0,0,.18);
 }
+
+/* =========================
+   HEADER
+========================= */
 
 .game-header {
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .game-header h1 {
-  margin: 0 0 6px;
-  font-size: clamp(24px, 4vw, 42px);
+  margin: 0 0 5px;
+  font-size: clamp(23px, 4vw, 40px);
 }
 
 .game-header p {
   margin: 0;
-  font-size: clamp(14px, 2vw, 18px);
-  opacity: .75;
+  opacity: .7;
+  font-size: clamp(13px, 2vw, 17px);
 }
+
+/* =========================
+   HUD
+========================= */
 
 .hud {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .hud-box {
-  background: #f1f3f7;
-  border-radius: 14px;
-  padding: 9px 15px;
-  font-weight: 700;
+  background: #f0f2f5;
+  border-radius: 12px;
+  padding: 8px 13px;
+  font-weight: 800;
+  font-size: 14px;
 }
 
 .timer {
-  min-width: 100px;
+  min-width: 85px;
   text-align: center;
 }
 
 .timer.danger {
-  animation: pulse .5s infinite alternate;
+  animation: pulse .45s infinite alternate;
 }
 
 @keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.1);
+  }
 }
 
-/* GAME */
+/* =========================
+   GAME WINDOW
+========================= */
 
 .game-window {
   position: relative;
   width: 100%;
-  height: clamp(280px, 48vw, 470px);
+  height: clamp(280px, 48vw, 440px);
+
   overflow: hidden;
-  border-radius: 22px;
-  background: linear-gradient(#8ed8ff 0%, #c9f1ff 65%, #eefcff 100%);
+
   border: 4px solid #222;
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #82d7ff 0%,
+      #c8f0ff 67%,
+      #e9faff 100%
+    );
+
   isolation: isolate;
 }
 
-.sky {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
+/* =========================
+   CLOUDS
+========================= */
 
 .cloud {
   position: absolute;
-  width: 100px;
-  height: 35px;
-  border-radius: 30px;
-  background: rgba(255,255,255,.8);
-  filter: blur(.2px);
+  z-index: 1;
+
+  font-size: 45px;
+
+  opacity: .75;
+
+  pointer-events: none;
+
   animation: cloudMove linear infinite;
 }
 
-.cloud:before,
-.cloud:after {
-  content: "";
-  position: absolute;
-  background: inherit;
-  border-radius: 50%;
-}
-
-.cloud:before {
-  width: 45px;
-  height: 45px;
-  left: 18px;
-  top: -22px;
-}
-
-.cloud:after {
-  width: 55px;
-  height: 55px;
-  right: 10px;
-  top: -30px;
-}
-
 .cloud1 {
-  top: 45px;
+  top: 25px;
   left: 10%;
-  animation-duration: 18s;
+  animation-duration: 16s;
 }
 
 .cloud2 {
-  top: 90px;
-  left: 60%;
-  transform: scale(.7);
-  animation-duration: 24s;
+  top: 80px;
+  left: 65%;
+  animation-duration: 22s;
 }
 
 @keyframes cloudMove {
-  from { margin-left: 0; }
-  to { margin-left: -160px; }
+
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-180px);
+  }
+
 }
+
+/* =========================
+   CITY
+========================= */
 
 .city {
   position: absolute;
-  bottom: 75px;
+
+  bottom: 67px;
   left: 0;
+
   width: 200%;
-  height: 130px;
+
   display: flex;
-  align-items: flex-end;
   gap: 12px;
+
+  align-items: flex-end;
+
   animation: cityMove 7s linear infinite;
+
+  pointer-events: none;
 }
 
-.building-bg {
-  flex: 0 0 80px;
-  height: var(--h);
-  background: rgba(85,105,130,.35);
-  border-radius: 5px 5px 0 0;
+.city span {
+  display: block;
+
+  width: 80px;
+
+  height: var(--height);
+
+  background: rgba(75,95,115,.3);
+
+  border-radius: 6px 6px 0 0;
 }
 
 @keyframes cityMove {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+
 }
+
+/* =========================
+   ROAD
+========================= */
 
 .ground {
   position: absolute;
+
+  z-index: 2;
+
   bottom: 0;
   left: 0;
+
   width: 200%;
-  height: 78px;
+  height: 70px;
+
   background:
     repeating-linear-gradient(
       90deg,
-      #333 0 55px,
-      #3b3b3b 55px 110px
+      #343434 0 65px,
+      #3d3d3d 65px 130px
     );
-  border-top: 8px solid #75b83b;
-  animation: groundMove .65s linear infinite;
+
+  border-top: 7px solid #72b638;
+
+  animation: roadMove .55s linear infinite;
 }
 
-@keyframes groundMove {
-  from { transform: translateX(0); }
-  to { transform: translateX(-110px); }
+@keyframes roadMove {
+
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-130px);
+  }
+
 }
 
-/* PLAYER */
+/* =========================
+   PLAYER
+========================= */
 
 .player {
   position: absolute;
-  z-index: 10;
-  width: clamp(55px, 9vw, 92px);
+
+  z-index: 20;
+
+  left: 13%;
+  bottom: 59px;
+
+  width: clamp(55px, 9vw, 88px);
+
   height: auto;
-  left: 12%;
-  bottom: 68px;
-  object-fit: contain;
-  transform-origin: center bottom;
+
   user-select: none;
   pointer-events: none;
-  transition: transform .12s ease;
+
+  transform-origin: center bottom;
 }
 
 .player.running {
-  animation: runBob .18s infinite alternate;
+  animation: running .16s infinite alternate;
 }
 
-.player.jump {
+@keyframes running {
+
+  from {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  to {
+    transform:
+      translateY(-6px)
+      rotate(2deg);
+  }
+
+}
+
+.player.jumping {
   animation: none;
 }
 
-@keyframes runBob {
-  from {
-    transform: translateY(0) rotate(-2deg);
-  }
-  to {
-    transform: translateY(-7px) rotate(2deg);
-  }
-}
-
-.player.flip {
-  transform: scaleX(-1);
-}
-
-/* DUST */
+/* =========================
+   DUST
+========================= */
 
 .dust {
   position: absolute;
-  z-index: 8;
-  width: 55px;
-  height: 40px;
+
+  z-index: 18;
+
   left: 8%;
-  bottom: 64px;
-  object-fit: contain;
-  opacity: .7;
-  animation: dustPop .3s infinite alternate;
+  bottom: 59px;
+
+  font-size: 34px;
+
   pointer-events: none;
+
+  animation: dust .25s infinite alternate;
 }
 
-@keyframes dustPop {
+@keyframes dust {
+
   from {
     transform: scale(.8);
-    opacity: .35;
+    opacity: .45;
   }
+
   to {
-    transform: scale(1.05);
-    opacity: .8;
+    transform: scale(1.1);
+    opacity: .9;
   }
+
 }
 
-/* OBSTACLES */
-
-.obstacle {
-  position: absolute;
-  z-index: 9;
-  bottom: 67px;
-  right: -130px;
-  width: clamp(48px, 8vw, 80px);
-  height: auto;
-  object-fit: contain;
-  pointer-events: none;
-}
-
-.obstacle.car {
-  width: clamp(75px, 13vw, 125px);
-}
-
-.obstacle.cart {
-  width: clamp(60px, 10vw, 95px);
-}
-
-/* ANIMALS */
-
-.animal {
-  position: absolute;
-  z-index: 11;
-  width: clamp(45px, 8vw, 75px);
-  height: auto;
-  right: -100px;
-  top: -100px;
-  object-fit: contain;
-  pointer-events: none;
-}
-
-.animal.falling {
-  animation: animalDrop 1.3s linear forwards;
-}
-
-@keyframes animalDrop {
-  0% {
-    transform: translate(0,0) rotate(-15deg);
-  }
-  100% {
-    transform: translate(-40vw, 430px) rotate(40deg);
-  }
-}
-
-/* OFFICE */
+/* =========================
+   OFFICE
+========================= */
 
 .office {
   position: absolute;
-  z-index: 7;
-  right: 20px;
-  bottom: 69px;
-  width: clamp(85px, 13vw, 145px);
-  max-height: 180px;
-  object-fit: contain;
-  transition: transform .5s ease;
+
+  z-index: 5;
+
+  right: 18px;
+  bottom: 62px;
+
+  font-size: clamp(55px, 9vw, 95px);
 }
 
-.office.arrived {
-  animation: officeBounce .6s ease;
+/* =========================
+   OBSTACLES
+========================= */
+
+.obstacle {
+
+  position: absolute;
+
+  z-index: 15;
+
+  right: -100px;
+  bottom: 57px;
+
+  font-size: clamp(42px, 7vw, 70px);
+
+  line-height: 1;
+
+  pointer-events: none;
+
+  will-change: right;
 }
 
-@keyframes officeBounce {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
+.obstacle.car {
+  font-size: clamp(50px, 9vw, 85px);
 }
 
-/* DANGER */
+.obstacle.cart {
+  font-size: clamp(45px, 8vw, 75px);
+}
+
+/* =========================
+   ANIMALS
+========================= */
+
+.animal {
+
+  position: absolute;
+
+  z-index: 16;
+
+  right: -100px;
+
+  bottom: 57px;
+
+  top: auto;
+
+  font-size: clamp(42px, 7vw, 70px);
+
+  line-height: 1;
+
+  pointer-events: none;
+
+  will-change: right, transform;
+
+  animation: animalWalk .35s infinite alternate;
+}
+
+@keyframes animalWalk {
+
+  from {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  to {
+    transform:
+      translateY(-4px)
+      rotate(2deg);
+  }
+
+}
+
+/* =========================
+   DANGER BANNER
+========================= */
 
 .danger-banner {
+
   position: absolute;
-  z-index: 30;
+
+  z-index: 50;
+
   top: 12px;
   left: 50%;
-  transform: translateX(-50%) translateY(-100px);
-  padding: 9px 18px;
-  border-radius: 999px;
+
+  transform:
+    translateX(-50%)
+    translateY(-80px);
+
   background: #e63946;
+
   color: white;
+
+  padding: 8px 16px;
+
+  border-radius: 999px;
+
   font-weight: 800;
+
   white-space: nowrap;
+
   opacity: 0;
+
   transition: .35s ease;
-  box-shadow: 0 8px 20px rgba(0,0,0,.2);
 }
 
 .danger-banner.show {
-  transform: translateX(-50%) translateY(0);
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+
   opacity: 1;
 }
 
-/* CONTROLS */
+/* =========================
+   CONTROLS
+========================= */
 
 .controls {
+
   display: flex;
+
   justify-content: center;
-  margin-top: 15px;
+
+  margin-top: 12px;
 }
 
 .jump-btn {
-  width: min(260px, 100%);
-  min-height: 60px;
+
+  width: min(280px, 100%);
+
+  min-height: 58px;
+
   border: 0;
-  border-radius: 18px;
+
+  border-radius: 16px;
+
   background: #222;
+
   color: white;
-  font-size: 20px;
+
+  font: inherit;
+
+  font-size: 19px;
+
   font-weight: 800;
+
   cursor: pointer;
-  box-shadow: 0 7px 0 #000;
+
+  box-shadow: 0 6px 0 #000;
+
   touch-action: manipulation;
 }
 
 .jump-btn:active {
-  transform: translateY(5px);
+
+  transform: translateY(4px);
+
   box-shadow: 0 2px 0 #000;
 }
 
 .instructions {
+
+  margin: 10px 0 0;
+
   text-align: center;
-  margin: 12px 0 0;
-  font-size: 14px;
-  opacity: .65;
+
+  opacity: .6;
+
+  font-size: 13px;
 }
 
-/* RESULT */
+/* =========================
+   RESULT SCREEN
+========================= */
 
 .game-result {
+
   position: absolute;
+
   z-index: 100;
+
   inset: 0;
+
   display: none;
+
   align-items: center;
+
   justify-content: center;
-  padding: 20px;
-  background: rgba(10,15,25,.72);
-  backdrop-filter: blur(5px);
+
+  padding: 18px;
+
+  background: rgba(0,0,0,.68);
+
+  backdrop-filter: blur(4px);
 }
 
 .game-result.show {
@@ -408,93 +553,151 @@ body {
 }
 
 .result-box {
-  width: min(500px, 100%);
-  padding: 30px;
-  border-radius: 24px;
+
+  width: min(480px, 100%);
+
   background: white;
+
+  border-radius: 22px;
+
+  padding: 27px;
+
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,.3);
 }
 
 .result-box h2 {
-  margin: 0 0 10px;
-  font-size: clamp(28px, 6vw, 45px);
+
+  margin: 0 0 8px;
+
+  font-size: clamp(27px, 6vw, 43px);
 }
 
 .result-box p {
-  margin: 0 0 20px;
-  font-size: 17px;
+
+  margin: 0 0 18px;
 }
 
 .result-buttons {
+
   display: flex;
-  gap: 10px;
+
   justify-content: center;
+
+  gap: 9px;
+
   flex-wrap: wrap;
 }
 
 .result-buttons button,
 .result-buttons a {
+
+  padding: 12px 18px;
+
   border: 0;
-  border-radius: 13px;
-  padding: 13px 20px;
+
+  border-radius: 12px;
+
   font: inherit;
+
   font-weight: 800;
+
   cursor: pointer;
+
   text-decoration: none;
 }
 
 .retry {
+
   background: #222;
+
   color: white;
 }
 
 .continue {
+
   background: #19a974;
+
   color: white;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
-@media (max-width: 600px) {
+@media(max-width:600px) {
+
   .game-page {
-    padding: 8px;
+
+    padding: 7px;
+
     align-items: flex-start;
   }
 
   .game-card {
-    margin-top: 8px;
-    padding: 13px;
-    border-radius: 20px;
-  }
 
-  .game-header {
-    margin-bottom: 10px;
+    margin-top: 6px;
+
+    padding: 12px;
+
+    border-radius: 19px;
   }
 
   .game-window {
+
     height: 58vh;
+
     min-height: 300px;
-    max-height: 430px;
-  }
 
-  .office {
-    right: 8px;
-  }
-
-  .player {
-    left: 11%;
+    max-height: 420px;
   }
 
   .hud-box {
-    padding: 7px 10px;
-    font-size: 13px;
+
+    padding: 7px 9px;
+
+    font-size: 12px;
+  }
+
+  .game-header h1 {
+
+    font-size: 24px;
+  }
+
+  .game-header p {
+
+    font-size: 12px;
   }
 
   .instructions {
-    font-size: 12px;
+
+    font-size: 11px;
   }
+
 }
+
+/* Very small phones */
+
+@media(max-width:380px) {
+
+  .game-window {
+
+    height: 330px;
+  }
+
+  .game-header h1 {
+
+    font-size: 21px;
+  }
+
+  .hud-box {
+
+    font-size: 10px;
+
+    padding: 6px 7px;
+  }
+
+}
+
 </style>
 </head>
 
@@ -502,508 +705,1201 @@ body {
 
 <main class="game-page">
 
-  <section class="game-card">
+<section class="game-card">
 
-    <header class="game-header">
-      <h1>🏃 HELP ME GET TO WORK!</h1>
-      <p>I'm late for work! I trust you. Don't let me die! 😭</p>
-    </header>
+<header class="game-header">
 
-    <div class="hud">
-      <div class="hud-box">
-        ❤️ Don't die!
+  <h1>🏃 HELP ME GET TO WORK!</h1>
+
+  <p>
+    I'm late for work! I trust you.
+    Don't let me die! 😭
+  </p>
+
+</header>
+
+
+<!-- HUD -->
+
+<div class="hud">
+
+  <div class="hud-box">
+    ❤️ DON'T DIE!
+  </div>
+
+  <div
+    class="hud-box timer"
+    id="timer"
+  >
+    20.0s
+  </div>
+
+  <div
+    class="hud-box"
+    id="status"
+  >
+    RUN!
+  </div>
+
+</div>
+
+
+<!-- GAME -->
+
+<div
+  class="game-window"
+  id="game"
+>
+
+  <!-- Clouds -->
+
+  <div class="cloud cloud1">
+    ☁️
+  </div>
+
+  <div class="cloud cloud2">
+    ☁️
+  </div>
+
+
+  <!-- Background city -->
+
+  <div class="city">
+
+    <span style="--height:90px"></span>
+    <span style="--height:130px"></span>
+    <span style="--height:75px"></span>
+    <span style="--height:150px"></span>
+    <span style="--height:105px"></span>
+    <span style="--height:135px"></span>
+    <span style="--height:80px"></span>
+    <span style="--height:120px"></span>
+    <span style="--height:95px"></span>
+    <span style="--height:140px"></span>
+
+  </div>
+
+
+  <!-- Office -->
+
+  <div class="office">
+    🏢
+  </div>
+
+
+  <!-- Dust -->
+
+  <div class="dust">
+    💨
+  </div>
+
+
+  <!-- MAN IMAGE -->
+
+  <img
+    id="player"
+    class="player running"
+    src="https://pngimg.com/uploads/businessman/businessman_PNG6583.png"
+    alt="Running man"
+  >
+
+
+  <!-- Road -->
+
+  <div class="ground"></div>
+
+
+  <!-- Danger message -->
+
+  <div
+    class="danger-banner"
+    id="danger"
+  >
+    ⚠️ DANGER MODE! WATCH OUT!
+  </div>
+
+
+  <!-- Result -->
+
+  <div
+    class="game-result"
+    id="result"
+  >
+
+    <div class="result-box">
+
+      <h2 id="resultTitle"></h2>
+
+      <p id="resultText"></p>
+
+      <div class="result-buttons">
+
+        <button
+          class="retry"
+          id="retry"
+        >
+          🔄 TRY AGAIN
+        </button>
+
+        <a
+          class="continue"
+          id="continueBtn"
+          href="question8.html"
+          hidden
+        >
+          Continue to Question 8 →
+        </a>
+
       </div>
 
-      <div class="hud-box timer" id="timer">
-        20.0s
-      </div>
-
-      <div class="hud-box" id="status">
-        RUN!
-      </div>
     </div>
 
-    <div class="game-window" id="game">
+  </div>
 
-      <div class="sky">
-        <div class="cloud cloud1"></div>
-        <div class="cloud cloud2"></div>
-      </div>
+</div>
 
-      <div class="city">
-        <div class="building-bg" style="--h:90px"></div>
-        <div class="building-bg" style="--h:125px"></div>
-        <div class="building-bg" style="--h:70px"></div>
-        <div class="building-bg" style="--h:145px"></div>
-        <div class="building-bg" style="--h:100px"></div>
-        <div class="building-bg" style="--h:135px"></div>
-        <div class="building-bg" style="--h:80px"></div>
-        <div class="building-bg" style="--h:120px"></div>
-        <div class="building-bg" style="--h:90px"></div>
-        <div class="building-bg" style="--h:125px"></div>
-      </div>
 
-      <img
-        class="office"
-        id="office"
-        src="https://png.pngtree.com/png-clipart/20231020/original/pngtree-3d-illustration-of-offices-building-png-image_13378690.png"
-        alt="Office"
-      >
+<!-- MOBILE JUMP -->
 
-      <img
-        class="dust"
-        src="https://tse4.mm.bing.net/th/id/OIP.D5yDhjmSLrzYOS3j_lZKeQHaEy?r=0&pid=Api&h=220&P=0"
-        alt=""
-      >
+<div class="controls">
 
-      <img
-        class="player running"
-        id="player"
-        src="https://pngimg.com/uploads/businessman/businessman_PNG6583.png"
-        alt="Man running to work"
-      >
+  <button
+    class="jump-btn"
+    id="jump"
+  >
+    ⬆️ JUMP
+  </button>
 
-      <div class="ground"></div>
+</div>
 
-      <div class="danger-banner" id="danger">
-        ⚠️ DANGER MODE! THEY'RE COMING!
-      </div>
 
-      <div class="game-result" id="result">
+<p class="instructions">
 
-        <div class="result-box">
+  Press <b>↑ UP ARROW</b> or <b>SPACE</b> to jump
 
-          <h2 id="resultTitle"></h2>
+</p>
 
-          <p id="resultText"></p>
-
-          <div class="result-buttons">
-
-            <button class="retry" id="retry">
-              🔄 TRY AGAIN
-            </button>
-
-            <a class="continue" id="continueBtn" href="question8.html" hidden>
-              Continue to Question 8 →
-            </a>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div class="controls">
-      <button class="jump-btn" id="jump">
-        ⬆️ JUMP
-      </button>
-    </div>
-
-    <p class="instructions">
-      Press <b>↑ UP ARROW</b> or <b>SPACE</b> to jump • Survive for 20 seconds!
-    </p>
-
-  </section>
+</section>
 
 </main>
 
+
 <script src="effects.js"></script>
 
+
 <script>
+
 (() => {
 
-  const game = document.getElementById("game");
-  const player = document.getElementById("player");
-  const timer = document.getElementById("timer");
-  const status = document.getElementById("status");
-  const danger = document.getElementById("danger");
-  const result = document.getElementById("result");
-  const resultTitle = document.getElementById("resultTitle");
-  const resultText = document.getElementById("resultText");
-  const retryBtn = document.getElementById("retry");
-  const continueBtn = document.getElementById("continueBtn");
-  const office = document.getElementById("office");
-  const jumpBtn = document.getElementById("jump");
+  const game =
+    document.getElementById("game");
 
-  const MAN =
-    "https://pngimg.com/uploads/businessman/businessman_PNG6583.png";
+  const player =
+    document.getElementById("player");
 
-  const BOX =
-    "https://png.pngtree.com/png-clipart/20221014/original/pngtree-simulation-wooden-box-wooden-box-png-image_8686302.png";
+  const timer =
+    document.getElementById("timer");
 
-  const CART =
-    "https://tse1.mm.bing.net/th/id/OIP.jevjfxxlO1nZRGcnhEWJFwHaHa?r=0&pid=Api&h=220&P=0";
+  const status =
+    document.getElementById("status");
 
-  const EXTRA_OBSTACLE =
-    "https://tse2.mm.bing.net/th/id/OIP.S8z5YyJdX_yerUGa7oARcgHaF7?r=0&pid=Api&h=220&P=0";
+  const danger =
+    document.getElementById("danger");
 
-  const CAT =
-    "https://tse1.mm.bing.net/th/id/OIP.293z1xvNG6tZt0pS05ShLQHaGH?r=0&pid=Api&h=220&P=0";
+  const result =
+    document.getElementById("result");
 
-  const DOG =
-    "https://pngimg.com/uploads/dog/dog_PNG50381.png";
+  const resultTitle =
+    document.getElementById("resultTitle");
+
+  const resultText =
+    document.getElementById("resultText");
+
+  const retryBtn =
+    document.getElementById("retry");
+
+  const continueBtn =
+    document.getElementById("continueBtn");
+
+  const jumpBtn =
+    document.getElementById("jump");
+
 
   let running = false;
+
   let dead = false;
+
+  let jumping = false;
+
+
   let startTime = 0;
+
   let lastTime = 0;
-  let animationId = null;
-  let jumped = false;
+
   let jumpStart = 0;
+
+
   let obstacleTimer = 0;
+
   let animalTimer = 0;
+
+
   let obstacles = [];
+
   let animals = [];
 
-  const GAME_TIME = 20000;
 
-  function clearObjects() {
+  let animationFrame;
 
-    obstacles.forEach(o => o.remove());
-    animals.forEach(a => a.remove());
 
-    obstacles = [];
-    animals = [];
-  }
+  const TOTAL_TIME = 20000;
+
+
+  /* =========================
+     RESET
+  ========================= */
 
   function resetGame() {
 
-    cancelAnimationFrame(animationId);
+    cancelAnimationFrame(animationFrame);
 
-    clearObjects();
+
+    obstacles.forEach(item => {
+
+      if (item.el.parentNode) {
+        item.el.remove();
+      }
+
+    });
+
+
+    animals.forEach(item => {
+
+      if (item.el.parentNode) {
+        item.el.remove();
+      }
+
+    });
+
+
+    obstacles = [];
+
+    animals = [];
+
 
     running = true;
+
     dead = false;
-    jumped = false;
 
-    startTime = performance.now();
-    lastTime = startTime;
+    jumping = false;
 
-    obstacleTimer = 800;
+
+    startTime =
+      performance.now();
+
+    lastTime =
+      startTime;
+
+
+    obstacleTimer = 1000;
+
     animalTimer = 0;
 
-    timer.textContent = "20.0s";
-    status.textContent = "RUN!";
-    timer.classList.remove("danger");
-    danger.classList.remove("show");
 
-    player.src = MAN;
-    player.classList.add("running");
-    player.classList.remove("jump");
-    player.style.bottom = "68px";
-    player.style.transform = "";
+    timer.textContent =
+      "20.0s";
 
-    office.classList.remove("arrived");
+    status.textContent =
+      "RUN!";
 
-    result.classList.remove("show");
-    retryBtn.hidden = false;
-    continueBtn.hidden = true;
 
-    animationId = requestAnimationFrame(loop);
+    timer.classList.remove(
+      "danger"
+    );
+
+    danger.classList.remove(
+      "show"
+    );
+
+
+    player.classList.add(
+      "running"
+    );
+
+    player.classList.remove(
+      "jumping"
+    );
+
+
+    player.style.bottom =
+      "59px";
+
+
+    result.classList.remove(
+      "show"
+    );
+
+
+    retryBtn.hidden =
+      false;
+
+    continueBtn.hidden =
+      true;
+
+
+    animationFrame =
+      requestAnimationFrame(loop);
   }
+
+
+  /* =========================
+     JUMP
+  ========================= */
 
   function jump() {
 
-    if (!running || dead || jumped) return;
+    if (
+      !running ||
+      dead ||
+      jumping
+    ) {
+      return;
+    }
 
-    jumped = true;
-    jumpStart = performance.now();
 
-    player.classList.remove("running");
-    player.classList.add("jump");
+    jumping = true;
+
+    jumpStart =
+      performance.now();
+
+
+    player.classList.remove(
+      "running"
+    );
+
+    player.classList.add(
+      "jumping"
+    );
+
 
     animateJump();
   }
 
+
   function animateJump() {
 
-    if (!jumped || dead) return;
+    if (
+      !jumping ||
+      dead
+    ) {
+      return;
+    }
 
-    const elapsed = performance.now() - jumpStart;
-    const duration = 650;
 
-    const progress = Math.min(elapsed / duration, 1);
+    const elapsed =
+      performance.now() -
+      jumpStart;
 
-    const height = Math.sin(progress * Math.PI) * 155;
 
-    player.style.bottom = (68 + height) + "px";
+    const duration = 700;
 
-    if (progress >= 1) {
 
-      jumped = false;
-      player.style.bottom = "68px";
-      player.classList.remove("jump");
-      player.classList.add("running");
+    const progress =
+      Math.min(
+        elapsed / duration,
+        1
+      );
+
+
+    const height =
+      Math.sin(
+        progress * Math.PI
+      ) * 150;
+
+
+    player.style.bottom =
+      (59 + height) + "px";
+
+
+    if (
+      progress >= 1
+    ) {
+
+      jumping = false;
+
+
+      player.style.bottom =
+        "59px";
+
+
+      player.classList.remove(
+        "jumping"
+      );
+
+      player.classList.add(
+        "running"
+      );
+
 
       return;
     }
 
-    requestAnimationFrame(animateJump);
+
+    requestAnimationFrame(
+      animateJump
+    );
+
   }
+
+
+  /* =========================
+     CREATE OBSTACLE
+  ========================= */
 
   function createObstacle() {
 
-    const img = document.createElement("img");
+    const obstacle =
+      document.createElement(
+        "div"
+      );
 
-    const type = Math.random();
 
-    if (type < .5) {
-      img.src = BOX;
-      img.className = "obstacle box";
-    } else if (type < .8) {
-      img.src = CART;
-      img.className = "obstacle cart";
-    } else {
-      img.src = EXTRA_OBSTACLE;
-      img.className = "obstacle car";
+    const random =
+      Math.random();
+
+
+    if (random < .35) {
+
+      obstacle.textContent =
+        "📦";
+
+      obstacle.className =
+        "obstacle";
+
     }
 
-    img.alt = "";
-    game.appendChild(img);
-    obstacles.push(img);
+    else if (random < .60) {
+
+      obstacle.textContent =
+        "🛒";
+
+      obstacle.className =
+        "obstacle cart";
+
+    }
+
+    else if (random < .82) {
+
+      obstacle.textContent =
+        "🚗";
+
+      obstacle.className =
+        "obstacle car";
+
+    }
+
+    else {
+
+      obstacle.textContent =
+        "🪑";
+
+      obstacle.className =
+        "obstacle";
+
+    }
+
+
+    obstacle.style.right =
+      "-100px";
+
+
+    game.appendChild(
+      obstacle
+    );
+
+
+    obstacles.push({
+
+      el: obstacle,
+
+      x:
+        game.clientWidth + 100
+
+    });
+
   }
+
+
+  /* =========================
+     CREATE ANIMAL
+  ========================= */
 
   function createAnimal() {
 
-    const img = document.createElement("img");
+    const animal =
+      document.createElement(
+        "div"
+      );
 
-    img.src = Math.random() < .5 ? CAT : DOG;
-    img.className = "animal falling";
-    img.alt = "";
 
-    img.style.right = (-60 - Math.random() * 30) + "px";
-    img.style.top = (15 + Math.random() * 80) + "px";
+    /*
+     * CAT OR DOG
+     */
 
-    game.appendChild(img);
-    animals.push(img);
+    animal.textContent =
+      Math.random() < .5
+        ? "🐱"
+        : "🐶";
 
-    setTimeout(() => {
 
-      if (img.parentNode) {
-        img.remove();
-      }
+    animal.className =
+      "animal";
 
-      animals = animals.filter(a => a !== img);
 
-    }, 1500);
-  }
+    /*
+     * IMPORTANT:
+     * They start on the ROAD.
+     * They do NOT fall from the sky.
+     */
 
-  function moveObstacles(delta, elapsed) {
+    animal.style.right =
+      "-100px";
 
-    const speed = elapsed >= 10000 ? 420 : 290;
+    animal.style.bottom =
+      "57px";
 
-    obstacles.forEach((o, index) => {
 
-      const current = parseFloat(o.dataset.x || "0");
-
-      const x = current - speed * delta / 1000;
-
-      o.dataset.x = x;
-      o.style.right = (-x) + "px";
-
-      if (x < -180) {
-
-        o.remove();
-        obstacles.splice(index, 1);
-      }
-    });
-  }
-
-  function collision(a, b) {
-
-    const r1 = a.getBoundingClientRect();
-    const r2 = b.getBoundingClientRect();
-
-    const pad = 12;
-
-    return !(
-      r1.right - pad < r2.left ||
-      r1.left + pad > r2.right ||
-      r1.bottom - pad < r2.top ||
-      r1.top + pad > r2.bottom
+    game.appendChild(
+      animal
     );
+
+
+    animals.push({
+
+      el: animal,
+
+      x:
+        game.clientWidth + 100
+
+    });
+
   }
+
+
+  /* =========================
+     COLLISION
+  ========================= */
+
+  function collision(
+    playerRect,
+    obstacleRect
+  ) {
+
+    /*
+     * Smaller hitbox = fairer game.
+     */
+
+    const playerLeft =
+      playerRect.left +
+      playerRect.width * .25;
+
+    const playerRight =
+      playerRect.right -
+      playerRect.width * .25;
+
+    const playerTop =
+      playerRect.top +
+      playerRect.height * .20;
+
+    const playerBottom =
+      playerRect.bottom -
+      playerRect.height * .05;
+
+
+    const obstacleLeft =
+      obstacleRect.left +
+      obstacleRect.width * .15;
+
+    const obstacleRight =
+      obstacleRect.right -
+      obstacleRect.width * .15;
+
+    const obstacleTop =
+      obstacleRect.top +
+      obstacleRect.height * .15;
+
+    const obstacleBottom =
+      obstacleRect.bottom;
+
+
+    return (
+
+      playerRight >
+        obstacleLeft &&
+
+      playerLeft <
+        obstacleRight &&
+
+      playerBottom >
+        obstacleTop &&
+
+      playerTop <
+        obstacleBottom
+
+    );
+
+  }
+
+
+  /* =========================
+     CHECK COLLISIONS
+  ========================= */
 
   function checkCollisions() {
 
-    if (jumped) return;
+    /*
+     * Can't get hit while
+     * jumping.
+     */
 
-    for (const obstacle of obstacles) {
-
-      if (collision(player, obstacle)) {
-
-        die();
-        return;
-      }
-    }
-  }
-
-  function die() {
-
-    if (dead) return;
-
-    dead = true;
-    running = false;
-
-    cancelAnimationFrame(animationId);
-
-    player.classList.remove("running");
-
-    resultTitle.textContent = "💀 YOU KILLED ME!";
-
-    resultText.textContent =
-      "I trusted you... but that box/cart/car got me! 😭 Try again!";
-
-    retryBtn.hidden = false;
-    continueBtn.hidden = true;
-
-    result.classList.add("show");
-
-    if (window.Quiz && Quiz.answer) {
-      /*
-       * Q7 is recorded as wrong only if the player actually dies.
-       */
-    }
-  }
-
-  function win() {
-
-    if (dead) return;
-
-    running = false;
-
-    cancelAnimationFrame(animationId);
-
-    timer.textContent = "0.0s";
-    status.textContent = "MADE IT!";
-
-    player.classList.remove("running");
-
-    office.classList.add("arrived");
-
-    resultTitle.textContent = "🏢 YOU SAVED ME!";
-
-    resultText.textContent =
-      "I KNEW I COULD TRUST YOU! I made it to work! +1 POINT 🎉";
-
-    retryBtn.hidden = true;
-    continueBtn.hidden = false;
-
-    result.classList.add("show");
-
-    if (window.Quiz && Quiz.answer) {
-
-      Quiz.answer(
-        true,
-        "YOU SAVED ME! I KNEW I COULD TRUST YOU!",
-        "You didn't make it to work."
-      );
-    }
-
-    if (window.Quiz && Quiz.confetti) {
-      Quiz.confetti();
-    }
-  }
-
-  function loop(now) {
-
-    if (!running || dead) return;
-
-    const delta = now - lastTime;
-    lastTime = now;
-
-    const elapsed = now - startTime;
-    const remaining = Math.max(0, GAME_TIME - elapsed);
-
-    const seconds = remaining / 1000;
-
-    timer.textContent = seconds.toFixed(1) + "s";
-
-    if (elapsed >= 10000) {
-
-      if (!danger.classList.contains("show")) {
-
-        danger.classList.add("show");
-        timer.classList.add("danger");
-        status.textContent = "DANGER!";
-      }
-
-      obstacleTimer -= delta;
-
-      if (obstacleTimer <= 0) {
-
-        createObstacle();
-
-        obstacleTimer =
-          600 + Math.random() * 500;
-      }
-
-      animalTimer -= delta;
-
-      if (animalTimer <= 0) {
-
-        createAnimal();
-
-        animalTimer =
-          900 + Math.random() * 900;
-      }
-
-    } else {
-
-      obstacleTimer -= delta;
-
-      if (obstacleTimer <= 0) {
-
-        createObstacle();
-
-        obstacleTimer =
-          1100 + Math.random() * 900;
-      }
-    }
-
-    moveObstacles(delta, elapsed);
-
-    checkCollisions();
-
-    if (remaining <= 0) {
-
-      win();
+    if (jumping) {
       return;
     }
 
-    animationId = requestAnimationFrame(loop);
-  }
 
-  document.addEventListener("keydown", e => {
+    const playerRect =
+      player.getBoundingClientRect();
 
-    if (
-      e.code === "ArrowUp" ||
-      e.code === "Space"
+
+    /* OBSTACLES */
+
+    for (
+      const item of obstacles
     ) {
 
-      e.preventDefault();
-      jump();
+      const rect =
+        item.el.getBoundingClientRect();
+
+
+      if (
+        collision(
+          playerRect,
+          rect
+        )
+      ) {
+
+        die();
+
+        return;
+      }
+
     }
-  });
 
-  jumpBtn.addEventListener("pointerdown", e => {
 
-    e.preventDefault();
-    jump();
-  });
+    /* ANIMALS */
 
-  retryBtn.addEventListener("click", resetGame);
+    for (
+      const item of animals
+    ) {
 
-  player.addEventListener("error", () => {
+      const rect =
+        item.el.getBoundingClientRect();
 
-    player.alt = "Running man";
-  });
+
+      if (
+        collision(
+          playerRect,
+          rect
+        )
+      ) {
+
+        die();
+
+        return;
+      }
+
+    }
+
+  }
+
+
+  /* =========================
+     DIE
+  ========================= */
+
+  function die() {
+
+    if (dead) {
+      return;
+    }
+
+
+    dead = true;
+
+    running = false;
+
+
+    cancelAnimationFrame(
+      animationFrame
+    );
+
+
+    player.classList.remove(
+      "running"
+    );
+
+
+    resultTitle.textContent =
+      "💀 YOU KILLED ME!";
+
+
+    resultText.textContent =
+      "I trusted you... 😭 You hit something! Try again.";
+
+
+    retryBtn.hidden =
+      false;
+
+    continueBtn.hidden =
+      true;
+
+
+    result.classList.add(
+      "show"
+    );
+
+  }
+
+
+  /* =========================
+     WIN
+  ========================= */
+
+  function win() {
+
+    running = false;
+
+
+    cancelAnimationFrame(
+      animationFrame
+    );
+
+
+    timer.textContent =
+      "0.0s";
+
+
+    status.textContent =
+      "SAFE!";
+
+
+    player.classList.remove(
+      "running"
+    );
+
+
+    resultTitle.textContent =
+      "🏢 YOU SAVED ME!";
+
+
+    resultText.textContent =
+      "I KNEW I COULD TRUST YOU! I made it to work! 🎉 +1 POINT";
+
+
+    retryBtn.hidden =
+      true;
+
+    continueBtn.hidden =
+      false;
+
+
+    result.classList.add(
+      "show"
+    );
+
+
+    /*
+     * Record Q7 as correct.
+     */
+
+    if (
+      window.Quiz &&
+      Quiz.answer
+    ) {
+
+      Quiz.answer(
+
+        true,
+
+        "YOU SAVED ME! I KNEW I COULD TRUST YOU!",
+
+        "You didn't make it to work."
+
+      );
+
+    }
+
+
+    if (
+      window.Quiz &&
+      Quiz.confetti
+    ) {
+
+      Quiz.confetti();
+
+    }
+
+  }
+
+
+  /* =========================
+     MAIN LOOP
+  ========================= */
+
+  function loop(now) {
+
+    if (
+      !running ||
+      dead
+    ) {
+      return;
+    }
+
+
+    const delta =
+      now - lastTime;
+
+
+    lastTime =
+      now;
+
+
+    const elapsed =
+      now - startTime;
+
+
+    const remaining =
+      Math.max(
+        0,
+        TOTAL_TIME - elapsed
+      );
+
+
+    timer.textContent =
+      (remaining / 1000)
+        .toFixed(1)
+      + "s";
+
+
+    /* =====================
+       FIRST 10 SECONDS
+       EASY MODE
+    ===================== */
+
+    if (
+      elapsed < 10000
+    ) {
+
+      obstacleTimer -=
+        delta;
+
+
+      if (
+        obstacleTimer <= 0
+      ) {
+
+        createObstacle();
+
+
+        /*
+         * Slow obstacle
+         * frequency.
+         */
+
+        obstacleTimer =
+          1300 +
+          Math.random() * 800;
+
+      }
+
+    }
+
+
+    /* =====================
+       10-20 SECONDS
+       DANGER MODE
+    ===================== */
+
+    else {
+
+      if (
+        !danger.classList.contains(
+          "show"
+        )
+      ) {
+
+        danger.classList.add(
+          "show"
+        );
+
+
+        timer.classList.add(
+          "danger"
+        );
+
+
+        status.textContent =
+          "DANGER!";
+
+      }
+
+
+      /*
+       * MORE OBSTACLES
+       */
+
+      obstacleTimer -=
+        delta;
+
+
+      if (
+        obstacleTimer <= 0
+      ) {
+
+        createObstacle();
+
+
+        obstacleTimer =
+          750 +
+          Math.random() * 550;
+
+      }
+
+
+      /*
+       * CATS AND DOGS
+       */
+
+      animalTimer -=
+        delta;
+
+
+      if (
+        animalTimer <= 0
+      ) {
+
+        createAnimal();
+
+
+        /*
+         * Animals are
+         * spaced out.
+         */
+
+        animalTimer =
+          1300 +
+          Math.random() * 1000;
+
+      }
+
+    }
+
+
+    /* =====================
+       MOVE OBSTACLES
+    ===================== */
+
+    const obstacleSpeed =
+      elapsed >= 10000
+        ? 390
+        : 270;
+
+
+    obstacles.forEach(
+      item => {
+
+        item.x -=
+          obstacleSpeed *
+          delta /
+          1000;
+
+
+        /*
+         * Move from RIGHT
+         * toward LEFT.
+         */
+
+        item.el.style.right =
+          (
+            game.clientWidth -
+            item.x
+          ) + "px";
+
+      }
+    );
+
+
+    /*
+     * Remove passed obstacles.
+     */
+
+    obstacles =
+      obstacles.filter(
+        item => {
+
+          if (
+            item.x < -150
+          ) {
+
+            item.el.remove();
+
+            return false;
+
+          }
+
+          return true;
+
+        }
+      );
+
+
+    /* =====================
+       MOVE ANIMALS
+    ===================== */
+
+    const animalSpeed =
+      150;
+
+
+    animals.forEach(
+      item => {
+
+        /*
+         * Slow walking speed.
+         */
+
+        item.x -=
+          animalSpeed *
+          delta /
+          1000;
+
+
+        item.el.style.right =
+          (
+            game.clientWidth -
+            item.x
+          ) + "px";
+
+      }
+    );
+
+
+    /*
+     * Remove animals after
+     * they pass the player.
+     */
+
+    animals =
+      animals.filter(
+        item => {
+
+          if (
+            item.x < -150
+          ) {
+
+            item.el.remove();
+
+            return false;
+
+          }
+
+          return true;
+
+        }
+      );
+
+
+    /* COLLISION */
+
+    checkCollisions();
+
+
+    /* WIN */
+
+    if (
+      remaining <= 0
+    ) {
+
+      win();
+
+      return;
+
+    }
+
+
+    animationFrame =
+      requestAnimationFrame(
+        loop
+      );
+
+  }
+
+
+  /* =========================
+     KEYBOARD
+  ========================= */
+
+  document.addEventListener(
+    "keydown",
+    e => {
+
+      if (
+        e.code === "ArrowUp" ||
+        e.code === "Space"
+      ) {
+
+        e.preventDefault();
+
+        jump();
+
+      }
+
+    }
+  );
+
+
+  /* =========================
+     MOBILE BUTTON
+  ========================= */
+
+  jumpBtn.addEventListener(
+    "pointerdown",
+    e => {
+
+      e.preventDefault();
+
+      jump();
+
+    }
+  );
+
+
+  /* =========================
+     RETRY
+  ========================= */
+
+  retryBtn.addEventListener(
+    "click",
+    resetGame
+  );
+
+
+  /* START */
 
   resetGame();
 
 })();
+
 </script>
 
 </body>
