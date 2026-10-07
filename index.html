@@ -1,29 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Me Quiz</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body data-step="0">
-    <main class="stage">
-      <div class="hero">
-        <span class="badge">6 questions, 1 drawing</span>
-        <h1>How well do you know Richard?</h1>
-        <p class="lead">Welcome! Ready to test how well you know me?</p>
-        <a class="start" id="start" href="question1.html">Start the quiz</a>
-        <p class="tip">Tip: on a keyboard, press 1 to 4 to answer.</p>
-      </div>
-    </main>
-
-    <script src="effects.js"></script>
-    <script>
-      // A new run always starts with a clean score.
-      Quiz.reset();
-    </script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Me Quiz</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-step="0">
+<main class="stage">
+<section class="card hero">
+  <div class="badge">10 QUESTIONS · 3 MINI-GAMES 🎮</div>
+  <h1>How well do you know Richard?</h1>
+  <p class="lead">Welcome! Ready to test how well you know me?</p>
+  <a class="btn start" href="question1.html">Start the quiz →</a>
+  <p class="tip">Keyboard: press 1–4 on normal multiple-choice questions.</p>
+</section>
+</main>
+<script src="effects.js"></script>
+<script>Quiz.reset();</script>
+</body>
 </html>

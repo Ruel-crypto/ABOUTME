@@ -1,75 +1,23 @@
-# 🎉 About Me Quiz
+# ABOUTME - corrected 10-question quiz
 
-A fun, interactive quiz webpage to let people learn interesting facts about you!
+This package is the cleaned-up version of the About Me quiz.
 
-## Features
+Flow:
+1. question1.html
+2. question2.html
+3. drawing.html
+4. question4.html
+5. question5.html
+6. question6.html - food maze
+7. question7.html - 20-second runner
+8. question8.html - cat/dog trick question
+9. question9.html - Sir Francis
+10. question10.html - Disney princess fashion game
+11. results.html
 
-✨ **Interactive Quiz Interface** - Beautiful, modern design with smooth animations
-📊 **Progress Tracking** - Visual progress bar shows how far through the quiz you are
-🎯 **Instant Feedback** - See if your answer is correct with animations and fun facts
-🏆 **Score Display** - Get a personalized message based on your performance
-📱 **Responsive Design** - Looks great on desktop, tablet, and mobile devices
+The shared quiz state is stored in sessionStorage by effects.js.
 
-## How to Customize
+Q10 Jasmine image is loaded from the image URL supplied in the chat.
+Q7 uses the supplied businessman image URL.
 
-### Edit the Questions
-Open `script.js` and find the `quizQuestions` array. Each question object has:
-
-```javascript
-{
-    question: "Your question here?",
-    answers: ["Option 1", "Option 2", "Option 3", "Option 4"],
-    correct: 0, // Index of correct answer (0-3)
-    fun_fact: "Interesting fact about you!"
-}
-```
-
-**Example:**
-```javascript
-{
-    question: "What's my favorite programming language?",
-    answers: ["Python", "JavaScript", "Go", "Rust"],
-    correct: 1, // JavaScript is the correct answer
-    fun_fact: "I love JavaScript for its flexibility and the amazing web ecosystem!"
-}
-```
-
-### Customize Colors & Style
-Edit `style.css` to change:
-- Color scheme (currently purple gradient)
-- Fonts and sizes
-- Button styles
-- Animations
-
-### Customize Header Text
-Edit `index.html` to change:
-- Title
-- Subtitle
-- Page title
-
-## File Structure
-
-```
-├── index.html    - HTML template
-├── style.css     - Styling and animations
-├── script.js     - Quiz logic (edit questions here!)
-└── README.md     - This file
-```
-
-## How to Use
-
-1. **Deploy** the files to your hosting (GitHub Pages, Netlify, Vercel, etc.)
-2. **Share** the link with friends
-3. **Watch** them learn fun facts about you!
-
-## Tips for Great Questions
-
-- Mix different topics about yourself (hobbies, favorite things, fun facts)
-- Make the wrong answers plausible but clearly wrong
-- Add fun facts that reveal more about your personality
-- Keep the quiz short (5-10 questions is ideal)
-- Make it entertaining and let your personality shine!
-
----
-
-Made with ❤️ - Happy sharing!
+Upload the files to the root of the GitHub Pages repository.
